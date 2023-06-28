@@ -57,14 +57,16 @@ const createWord = (raw: string): Word => ({
   streak: 0,
 });
 
-const startingLevel = 0;
+const defaultLevel = 0;
+const defaultTargetWPM = 60;
+const defaultTargetStreak = 3;
 
 const initialState: State = {
-  word: createWord(wordlist[startingLevel]),
-  level: startingLevel,
+  word: createWord(wordlist[defaultLevel]),
+  level: defaultLevel,
   buffer: '',
-  targetWPM: 60,
-  targetStreak: 1,
+  targetWPM: defaultTargetWPM,
+  targetStreak: defaultTargetStreak,
   finished: false,
 };
 
@@ -257,33 +259,43 @@ export default function Home() {
         </div>
       </div>
       )}
-      <div className="fixed flex flex-wrap justify-center items-center gap-4 top-0 w-full p-10">
-        {[30, 60, 90, 120].map((wpm, index) => (
-          <button
-            key={index}
-            className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`}
-            onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}
-          >
-            <span className="font-bold text-lg">{wpm}</span>
-            <span className="text-sm">WPM</span>
-          </button>
-        ))}
-        <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
-        {[1, 3, 5, 10].map((streak, index) => (
-          <button
-            key={index}
-            className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-500 text-blue-400 bg-blue-950' : 'border-neutral-700 text-neutral-400'}`}
-            onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
-          >
-            <span className="font-bold text-lg">{streak}</span>
-            <span className="text-sm">Streak</span>
-          </button>
-        ))}
+      <div className="fixed flex justify-center top-0 right-0 w-full p-10">
+        <div className="relative inline-flex flex-wrap justify-center items-center gap-4 mx-auto">
+          {[30, 60, 90, 120].map((wpm, index) => (
+            <button
+              key={index}
+              className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`}
+              onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}
+            >
+              <span className="font-bold text-lg">{wpm}</span>
+              <span className="text-sm">WPM</span>
+            </button>
+          ))}
+          <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
+          {[1, 3, 5, 10].map((streak, index) => (
+            <button
+              key={index}
+              className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-500 text-blue-400 bg-blue-950' : 'border-neutral-700 text-neutral-400'}`}
+              onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
+            >
+              <span className="font-bold text-lg">{streak}</span>
+              <span className="text-sm">Streak</span>
+            </button>
+          ))}
+          <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 text-center">
+            <span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm">options</span>
+          </div> 
+        </div>
       </div>
-      <div className="fixed flex flex-wrap gap-1 bottom-0 w-full p-10">
-        {wordlist.map((_, index) => (
-          <div key={index} className={`w-2 h-2 rounded-full ${index < state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
-        ))}
+      <div className="fixed flex justify-center bottom-0 w-full p-10">
+        <div className="relative inline-flex flex-wrap gap-1 max-w-[800px] justify-center mx-auto">
+          {wordlist.map((_, index) => (
+            <div key={index} className={`w-1 h-1 rounded-full ${index < state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+          ))}
+          <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 text-center">
+            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">levels</span>
+          </div>
+        </div>
       </div>
     </main>
   )
