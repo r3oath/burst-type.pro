@@ -21,6 +21,7 @@ type State = {
   level: number;
   buffer: string;
   targetWPM: number;
+  finished: boolean;
 }
 
 type Action = {
@@ -39,6 +40,8 @@ type Action = {
   type: 'BACKSPACE_BUFFER';
 } | {
   type: 'STOP_TIMER';
+} | {
+  type: 'RESET_GAME';
 };
 
 const createWord = (raw: string): Word => ({
@@ -46,11 +49,14 @@ const createWord = (raw: string): Word => ({
   match: false,
 });
 
+const startingLevel = 0;
+
 const initialState: State = {
-  word: createWord(wordlist[0]),
-  level: 0,
+  word: createWord(wordlist[startingLevel]),
+  level: startingLevel,
   buffer: '',
   targetWPM: 60,
+  finished: false,
 };
 
 const reducer = (state: State, action: Action): State => {
@@ -100,7 +106,7 @@ const reducer = (state: State, action: Action): State => {
         buffer: state.buffer.slice(0, -1),
       };
     case 'STOP_TIMER':
-      if (state.buffer.length === 0) {
+      if (state.finished || state.buffer.length === 0) {
         return state;
       }
 
@@ -128,11 +134,24 @@ const reducer = (state: State, action: Action): State => {
         };
       }
 
+      if (state.level + 1 === wordlist.length) {
+        return {
+          ...state,
+          level: state.level + 1,
+          finished: true,
+        };
+      }
+
       return {
         ...state,
         level: state.level + 1,
         word: createWord(wordlist[state.level + 1]),
         buffer: '',
+      };
+    case 'RESET_GAME':
+      return {
+        ...initialState,
+        targetWPM: state.targetWPM,
       };
     default:
       return state;
@@ -177,7 +196,13 @@ export default function Home() {
 
   return (
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
-      <div className="text-center">
+      {state.finished ? (
+        <div className="text-center">
+          <h1 className="text-7xl font-bold text-neutral-50">Congrats!</h1>
+          <button className="px-4 py-2 mt-8 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESET_GAME'})}>Play Again</button>
+        </div>
+      ) : (
+        <div className="text-center">
         <p className="text-9xl font-bold tracking-wider">
           {state.word.characters.map((character, index) => (
             <span key={index} className={`${character.correct === undefined ? 'text-neutral-600' : character.correct ? 'text-neutral-100' : 'text-red-600'}`}>
@@ -195,6 +220,7 @@ export default function Home() {
           )}
         </p>
       </div>
+      )}
       <div className="fixed flex flex-wrap justify-center gap-4 top-0 w-full p-10">
         {[30, 60, 90, 120].map((wpm, index) => (
           <button key={index} className={`flex flex-col items-center w-16 p-2 border rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`} onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}>
@@ -205,7 +231,7 @@ export default function Home() {
       </div>
       <div className="fixed flex flex-wrap gap-1 bottom-0 w-full p-10">
         {wordlist.map((_, index) => (
-          <div key={index} className={`w-2 h-2 rounded-full ${index <= state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+          <div key={index} className={`w-2 h-2 rounded-full ${index < state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
         ))}
       </div>
     </main>
