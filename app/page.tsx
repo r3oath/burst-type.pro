@@ -13,7 +13,9 @@ type Word = {
   startTime?: number;
   endTime?: number;
   wpm?: number;
+  hitTargetWPM: boolean;
   match: boolean;
+  streak: number;
 }
 
 type State = {
@@ -21,10 +23,14 @@ type State = {
   level: number;
   buffer: string;
   targetWPM: number;
+  targetStreak: number;
   finished: boolean;
 }
 
 type Action = {
+  type: 'SET_TARGET_STREAK';
+  payload: number;
+} | {
   type: 'SET_TARGET_WPM';
   payload: number;
 } | {
@@ -39,7 +45,7 @@ type Action = {
 } | {
   type: 'BACKSPACE_BUFFER';
 } | {
-  type: 'STOP_TIMER';
+  type: 'NEXT_LEVEL';
 } | {
   type: 'RESET_GAME';
 };
@@ -47,6 +53,8 @@ type Action = {
 const createWord = (raw: string): Word => ({
   characters: raw.toLowerCase().split('').map(character => ({character})),
   match: false,
+  hitTargetWPM: false,
+  streak: 0,
 });
 
 const startingLevel = 0;
@@ -56,11 +64,17 @@ const initialState: State = {
   level: startingLevel,
   buffer: '',
   targetWPM: 60,
+  targetStreak: 1,
   finished: false,
 };
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'SET_TARGET_STREAK':
+      return {
+        ...state,
+        targetStreak: action.payload,
+      };
     case 'SET_TARGET_WPM':
       return {
         ...state,
@@ -105,19 +119,25 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         buffer: state.buffer.slice(0, -1),
       };
-    case 'STOP_TIMER':
+    case 'NEXT_LEVEL':
       if (state.finished || state.buffer.length === 0) {
         return state;
       }
 
       if (state.word.endTime === undefined) {
+        const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
+        const match = state.word.characters.every((character, index) => character.character === state.buffer[index]);
+        const hitTargetWPM = wpm >= state.targetWPM;
+
         return {
           ...state,
           word: {
             ...state.word,
             endTime: Date.now(),
-            wpm: Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000)),
-            match: state.word.characters.every((character, index) => character.character === state.buffer[index]),
+            streak: hitTargetWPM && match ? state.word.streak + 1 : 0,
+            wpm,
+            match,
+            hitTargetWPM,
           },
         };
       }
@@ -130,6 +150,17 @@ const reducer = (state: State, action: Action): State => {
         return {
           ...state,
           word: createWord(wordlist[state.level]),
+          buffer: '',
+        };
+      }
+
+      if (state.word.streak < state.targetStreak) {
+        return {
+          ...state,
+          word: {
+            ...createWord(wordlist[state.level]),
+            streak: state.word.streak,
+          },
           buffer: '',
         };
       }
@@ -172,7 +203,7 @@ export default function Home() {
       }
 
       if (e.key === ' ') {
-        dispatch({type: 'STOP_TIMER'});
+        dispatch({type: 'NEXT_LEVEL'});
       }
     }
 
@@ -214,18 +245,38 @@ export default function Home() {
           {state.word.wpm !== undefined ? (
             `${state.word.wpm} WPM`
           ) : state.word.startTime ===  undefined ? (
-            '---'
+            'N/A'
           ) : (
             '>>>'
           )}
         </p>
+        <div className="flex flex-wrap gap-4 justify-center mt-4">
+          {Array.from({length: state.targetStreak}).map((_, index) => (
+            <div key={index} className={`w-3 h-3 rounded ${index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+          ))}
+        </div>
       </div>
       )}
-      <div className="fixed flex flex-wrap justify-center gap-4 top-0 w-full p-10">
+      <div className="fixed flex flex-wrap justify-center items-center gap-4 top-0 w-full p-10">
         {[30, 60, 90, 120].map((wpm, index) => (
-          <button key={index} className={`flex flex-col items-center w-16 p-2 border rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`} onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}>
+          <button
+            key={index}
+            className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`}
+            onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}
+          >
             <span className="font-bold text-lg">{wpm}</span>
             <span className="text-sm">WPM</span>
+          </button>
+        ))}
+        <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
+        {[1, 3, 5, 10].map((streak, index) => (
+          <button
+            key={index}
+            className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-500 text-blue-400 bg-blue-950' : 'border-neutral-700 text-neutral-400'}`}
+            onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
+          >
+            <span className="font-bold text-lg">{streak}</span>
+            <span className="text-sm">Streak</span>
           </button>
         ))}
       </div>
