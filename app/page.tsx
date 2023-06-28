@@ -284,8 +284,8 @@ export default function Home() {
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
       {state.finished ? (
         <div className="text-center">
-          <h1 className="text-7xl font-bold text-neutral-50">Congrats!</h1>
-          <button className="px-4 py-2 mt-8 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESTART_GAME'})}>Play Again</button>
+          <h1 className="text-9xl font-bold text-neutral-50">Congrats!</h1>
+          <button className="px-4 py-2 mt-12 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESTART_GAME'})}>Start Again</button>
         </div>
       ) : (
         <div className="text-center">
@@ -300,7 +300,7 @@ export default function Home() {
         <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'}`}>
           {state.word.wpm !== undefined ? (
             `${state.word.wpm} WPM`
-          ) : state.word.startTime ===  undefined ? (
+          ) : state.word.startTime === undefined ? (
             'Ready'
           ) : (
             '>>>'
@@ -318,33 +318,33 @@ export default function Home() {
           {[30, 60, 90, 120].map((wpm, index) => (
             <button
               key={index}
-              className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950' : 'border-neutral-700 text-neutral-400'}`}
+              className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950 shadow-md shadow-green-800' : 'border-neutral-700 text-neutral-400'} hover:border-green-500 hover:text-green-400`}
               onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}
             >
               <span className="font-bold text-lg">{wpm}</span>
-              <span className="text-sm">WPM</span>
+              <span className="text-xs uppercase">WPM</span>
             </button>
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
           {[1, 3, 5, 10].map((streak, index) => (
             <button
               key={index}
-              className={`flex flex-col items-center w-16 p-2 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-500 text-blue-400 bg-blue-950' : 'border-neutral-700 text-neutral-400'}`}
+              className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-400 text-blue-400 bg-blue-950 shadow-md shadow-blue-800' : 'border-neutral-700 text-neutral-400'} hover:border-blue-400 hover:text-blue-400`}
               onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
             >
               <span className="font-bold text-lg">{streak}</span>
-              <span className="text-sm">Streak</span>
+              <span className="text-xs uppercase">Streak</span>
             </button>
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
           <button
-            className="flex flex-col items-center w-16 p-2 border-2 border-red-500 bg-red-950 text-red-400 rounded-md"
+            className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-red-500 hover:bg-red-950 hover:text-red-400 rounded-md"
             onClick={() => dispatch({type: 'RESET_STATE'})}
           >
             <span className="font-bold text-lg">X</span>
-            <span className="text-sm">Reset</span>
+            <span className="text-xs uppercase">Reset</span>
           </button>
-          <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 text-center">
+          <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
             <span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm">options</span>
           </div> 
         </div>
@@ -354,8 +354,8 @@ export default function Home() {
           {wordlist.map((_, index) => (
             <div key={index} className={`w-1 h-1 rounded-full ${index < state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
           ))}
-          <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 text-center">
-            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">levels</span>
+          <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 rounded-t-md text-center">
+            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`words (${state.level}/${wordlist.length})`}</span>
           </div>
         </div>
       </div>
