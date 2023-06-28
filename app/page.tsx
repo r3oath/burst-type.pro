@@ -1,6 +1,6 @@
 'use client'
 
-import {useEffect, useReducer, useState} from "react"
+import {useEffect, useReducer, useState, useRef} from "react"
 import wordlist from '../config/wordlist.json'
 
 type Character = {
@@ -173,6 +173,14 @@ const reducer = (state: State, action: Action): State => {
         return state;
       }
 
+      if (state.buffer.length < state.word.characters.length) {
+        return {
+          ...state,
+          word: createWord(wordlist[state.level]),
+          buffer: '',
+        };
+      }
+
       if (state.word.wpm === undefined) {
         return state;
       }
@@ -226,6 +234,7 @@ const reducer = (state: State, action: Action): State => {
 export default function Home() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [loadedState, setLoadedState] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -237,8 +246,14 @@ export default function Home() {
         dispatch({type: 'BACKSPACE_BUFFER'});
       }
 
-      if (e.key === ' ') {
+      if (e.key === ' ' || e.key === 'Tab' || e.key === 'Enter') {
+        e.preventDefault();
+
         dispatch({type: 'NEXT_LEVEL'});
+
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       }
     }
 
@@ -280,6 +295,7 @@ export default function Home() {
               {character.character}
             </span>
           ))}
+          <input ref={inputRef} className="sr-only" type="text"/>
         </p>
         <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'}`}>
           {state.word.wpm !== undefined ? (
