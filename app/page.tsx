@@ -107,11 +107,32 @@ const reducer = (state: State, action: Action): State => {
         return state;
       }
 
-      if (state.buffer.length >= state.word.characters.length) {
-        return state;
-      }
-
       const appendBuffer = state.buffer + action.payload;
+
+      if (appendBuffer.length >= state.word.characters.length) {
+        const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
+        const match = state.word.characters.every((character, index) => character.character === appendBuffer[index]);
+        const hitTargetWPM = wpm >= state.targetWPM;
+
+        return {
+          ...state,
+          buffer: appendBuffer,
+          word: {
+            ...state.word,
+            endTime: Date.now(),
+            streak: hitTargetWPM && match ? state.word.streak + 1 : 0,
+            characters: state.word.characters.map((character, index) => ({
+              ...character,
+              correct: appendBuffer[index] === undefined 
+                ? undefined 
+                : character.character === appendBuffer[index],
+            })),
+            wpm,
+            match,
+            hitTargetWPM,
+          },
+        };
+      }
 
       return {
         ...state,
@@ -150,24 +171,6 @@ const reducer = (state: State, action: Action): State => {
     case 'NEXT_LEVEL':
       if (state.finished || state.buffer.length === 0) {
         return state;
-      }
-
-      if (state.word.endTime === undefined) {
-        const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
-        const match = state.word.characters.every((character, index) => character.character === state.buffer[index]);
-        const hitTargetWPM = wpm >= state.targetWPM;
-
-        return {
-          ...state,
-          word: {
-            ...state.word,
-            endTime: Date.now(),
-            streak: hitTargetWPM && match ? state.word.streak + 1 : 0,
-            wpm,
-            match,
-            hitTargetWPM,
-          },
-        };
       }
 
       if (state.word.wpm === undefined) {
@@ -282,7 +285,7 @@ export default function Home() {
           {state.word.wpm !== undefined ? (
             `${state.word.wpm} WPM`
           ) : state.word.startTime ===  undefined ? (
-            'N/A'
+            'Ready'
           ) : (
             '>>>'
           )}
