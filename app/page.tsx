@@ -169,7 +169,7 @@ const reducer = (state: State, action: Action): State => {
         },
       };
     case 'NEXT_LEVEL':
-      if (state.finished || state.buffer.length === 0) {
+      if (state.finished) {
         return state;
       }
 
@@ -299,18 +299,18 @@ export default function Home() {
         <div className="text-center">
         <p className="text-9xl font-bold tracking-wider">
           {state.word.characters.map((character, index) => (
-            <span key={index} className={`${character.correct === undefined ? 'text-neutral-600' : character.correct ? 'text-neutral-100' : 'text-red-600'}`}>
+            <span key={index} className={`${character.correct === undefined ? 'text-neutral-600' : character.correct ? 'text-neutral-50' : 'text-red-600'}`}>
               {character.character}
             </span>
           ))}
           <input ref={inputRef} className="sr-only" type="text"/>
         </p>
-        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'} ${state.word.startTime !== undefined && state.word.wpm === undefined ? 'animate-pulse' : ''}`}>
-          {state.word.wpm !== undefined ? `${state.word.wpm} WPM` : state.word.startTime === undefined ? 'Ready' : '>>>'}
+        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'} ${state.word.startTime !== undefined && state.word.wpm === undefined ? 'italic animate-pulse' : ''}`}>
+          {state.word.wpm !== undefined ? `${state.word.wpm} WPM` : state.word.startTime === undefined ? 'Ready' : '>>> GO >>>'}
         </p>
         <div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
           {Array.from({length: state.targetStreak}).map((_, index) => (
-            <div key={index} className={`w-4 h-4 ${index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+            <div key={index} className={`w-4 h-4 ${state.word.wpm !== undefined && !state.word.match ? 'bg-red-600' : index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
           ))}
         </div>
       </div>
