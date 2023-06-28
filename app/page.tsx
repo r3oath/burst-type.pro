@@ -280,6 +280,14 @@ export default function Home() {
     }
   }, [loadedState, state]);
 
+  const handleReset = () => {
+    if (!confirm('Are you sure you want to reset your progress?')) {
+      return;
+    }
+
+    dispatch({type: 'RESET_STATE'})
+  };
+
   return (
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
       {state.finished ? (
@@ -297,14 +305,8 @@ export default function Home() {
           ))}
           <input ref={inputRef} className="sr-only" type="text"/>
         </p>
-        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'}`}>
-          {state.word.wpm !== undefined ? (
-            `${state.word.wpm} WPM`
-          ) : state.word.startTime === undefined ? (
-            'Ready'
-          ) : (
-            '>>>'
-          )}
+        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'} ${state.word.startTime !== undefined && state.word.wpm === undefined ? 'animate-pulse' : ''}`}>
+          {state.word.wpm !== undefined ? `${state.word.wpm} WPM` : state.word.startTime === undefined ? 'Ready' : '>>>'}
         </p>
         <div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
           {Array.from({length: state.targetStreak}).map((_, index) => (
@@ -338,8 +340,8 @@ export default function Home() {
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
           <button
-            className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-red-500 hover:bg-red-950 hover:text-red-400 rounded-md"
-            onClick={() => dispatch({type: 'RESET_STATE'})}
+            className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-red-500 hover:bg-red-950 hover:text-red-400 hover:shadow-md hover:shadow-red-800 rounded-md"
+            onClick={handleReset}
           >
             <span className="font-bold text-lg">X</span>
             <span className="text-xs uppercase">Reset</span>
