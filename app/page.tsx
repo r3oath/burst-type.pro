@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useReducer } from "react"
+import {useEffect, useReducer, useState} from "react"
 import wordlist from '../config/wordlist.json'
 
 type Character = {
@@ -28,6 +28,9 @@ type State = {
 }
 
 type Action = {
+  type: 'LOAD_STATE';
+  payload: State;
+} | {
   type: 'SET_TARGET_STREAK';
   payload: number;
 } | {
@@ -47,7 +50,9 @@ type Action = {
 } | {
   type: 'NEXT_LEVEL';
 } | {
-  type: 'RESET_GAME';
+  type: 'RESTART_GAME';
+} | {
+  type: 'RESET_STATE';
 };
 
 const createWord = (raw: string): Word => ({
@@ -72,6 +77,8 @@ const initialState: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'LOAD_STATE':
+      return action.payload;
     case 'SET_TARGET_STREAK':
       return {
         ...state,
@@ -104,12 +111,20 @@ const reducer = (state: State, action: Action): State => {
         return state;
       }
 
+      const appendBuffer = state.buffer + action.payload;
+
       return {
         ...state,
-        buffer: state.buffer + action.payload,
-        word: state.word.startTime ? state.word : {
+        buffer: appendBuffer,
+        word: {
           ...state.word,
-          startTime: Date.now(),
+          startTime: state.word.startTime ?? Date.now(),
+          characters: state.word.characters.map((character, index) => ({
+            ...character,
+            correct: appendBuffer[index] === undefined 
+              ? undefined 
+              : character.character === appendBuffer[index],
+          })),
         },
       };
     case 'BACKSPACE_BUFFER':
@@ -117,9 +132,20 @@ const reducer = (state: State, action: Action): State => {
         return state;
       }
 
+      const backspaceBuffer = state.buffer.slice(0, -1);
+
       return {
         ...state,
-        buffer: state.buffer.slice(0, -1),
+        buffer: backspaceBuffer,
+        word: {
+          ...state.word,
+          characters: state.word.characters.map((character, index) => ({
+            ...character,
+            correct: backspaceBuffer[index] === undefined 
+              ? undefined 
+              : character.character === backspaceBuffer[index],
+          })),
+        },
       };
     case 'NEXT_LEVEL':
       if (state.finished || state.buffer.length === 0) {
@@ -181,11 +207,14 @@ const reducer = (state: State, action: Action): State => {
         word: createWord(wordlist[state.level + 1]),
         buffer: '',
       };
-    case 'RESET_GAME':
+    case 'RESTART_GAME':
       return {
         ...initialState,
         targetWPM: state.targetWPM,
+        targetStreak: state.targetStreak,
       };
+    case 'RESET_STATE':
+      return initialState;
     default:
       return state;
   }
@@ -193,6 +222,7 @@ const reducer = (state: State, action: Action): State => {
 
 export default function Home() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [loadedState, setLoadedState] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -217,22 +247,27 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const characters = state.word.characters.map((character, index) => ({
-      ...character,
-      correct: state.buffer[index] === undefined 
-        ? undefined 
-        : character.character === state.buffer[index],
-    }));
+    if (loadedState) {
+      localStorage.setItem('state', JSON.stringify(state));
+    }
 
-    dispatch({type: 'SET_CHARACTERS', payload: characters});
-  }, [state.buffer]);
+    if (!loadedState) {
+      const localStorageState = localStorage.getItem('state');
+
+      if (localStorageState) {
+        dispatch({type: 'LOAD_STATE', payload: JSON.parse(localStorageState)});
+      }
+
+      setLoadedState(true);
+    }
+  }, [loadedState, state]);
 
   return (
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
       {state.finished ? (
         <div className="text-center">
           <h1 className="text-7xl font-bold text-neutral-50">Congrats!</h1>
-          <button className="px-4 py-2 mt-8 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESET_GAME'})}>Play Again</button>
+          <button className="px-4 py-2 mt-8 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESTART_GAME'})}>Play Again</button>
         </div>
       ) : (
         <div className="text-center">
@@ -252,9 +287,9 @@ export default function Home() {
             '>>>'
           )}
         </p>
-        <div className="flex flex-wrap gap-4 justify-center mt-4">
+        <div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
           {Array.from({length: state.targetStreak}).map((_, index) => (
-            <div key={index} className={`w-3 h-3 rounded ${index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+            <div key={index} className={`w-4 h-4 ${index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
           ))}
         </div>
       </div>
@@ -282,6 +317,14 @@ export default function Home() {
               <span className="text-sm">Streak</span>
             </button>
           ))}
+          <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
+          <button
+            className="flex flex-col items-center w-16 p-2 border-2 border-red-500 bg-red-950 text-red-400 rounded-md"
+            onClick={() => dispatch({type: 'RESET_STATE'})}
+          >
+            <span className="font-bold text-lg">X</span>
+            <span className="text-sm">Reset</span>
+          </button>
           <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 text-center">
             <span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm">options</span>
           </div> 
