@@ -25,6 +25,7 @@ type State = {
   targetWPM: number;
   targetStreak: number;
   finished: boolean;
+  lastSave?: number;
 }
 
 type Action = {
@@ -83,11 +84,13 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         targetStreak: action.payload,
+        lastSave: Date.now(),
       };
     case 'SET_TARGET_WPM':
       return {
         ...state,
         targetWPM: action.payload,
+        lastSave: Date.now(),
       };
     case 'SET_WORD':
       return {
@@ -209,6 +212,7 @@ const reducer = (state: State, action: Action): State => {
           ...state,
           level: state.level + 1,
           finished: true,
+          lastSave: Date.now(),
         };
       }
 
@@ -217,12 +221,14 @@ const reducer = (state: State, action: Action): State => {
         level: state.level + 1,
         word: createWord(wordlist[state.level + 1]),
         buffer: '',
+        lastSave: Date.now(),
       };
     case 'RESTART_GAME':
       return {
         ...initialState,
         targetWPM: state.targetWPM,
         targetStreak: state.targetStreak,
+        lastSave: Date.now(),
       };
     case 'RESET_STATE':
       return initialState;
@@ -278,7 +284,7 @@ export default function Home() {
 
       setLoadedState(true);
     }
-  }, [loadedState, state]);
+  }, [loadedState, state.lastSave]);
 
   const handleReset = () => {
     if (!confirm('Are you sure you want to reset your progress?')) {
