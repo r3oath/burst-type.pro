@@ -1,6 +1,7 @@
-import './globals.css'
-import { Fira_Mono } from 'next/font/google'
-import type { Metadata } from 'next'
+import './globals.css';
+import { Fira_Mono } from 'next/font/google';
+import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/react';
 
 const fira = Fira_Mono({ subsets: ['latin'], weight: ['400', '700'] })
 
@@ -23,7 +24,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={fira.className}>{children}</body>
+      <body className={fira.className}>
+        {children}
+        <Analytics/>
+      </body>
     </html>
   )
 }
