@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     title: 'Descent Type Training',
     description: 'Practice typing the most common English words to build burst speed and muscle memory.',
     images: ['https://descent-typing.vercel.app/images/descent.jpg'],
+    url: 'https://descent-typing.vercel.app',
   },
 }
 
