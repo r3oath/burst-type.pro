@@ -352,9 +352,9 @@ export default function Home() {
         </div>
       </div>
       <div className="fixed flex justify-center bottom-0 w-full p-10">
-        <div className="relative inline-flex flex-wrap gap-1 max-w-[800px] justify-center mx-auto">
+        <div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto">
           {wordlist.map((_, index) => (
-            <div key={index} className={`w-1 h-1 rounded-full ${index < state.level ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+            <div key={index} className={`w-1 h-1 ${index < state.level ? 'bg-green-600' : 'bg-neutral-800'}`}/>
           ))}
           <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 rounded-t-md text-center">
             <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`words (${state.level}/${wordlist.length})`}</span>
