@@ -27,6 +27,7 @@ type Word = {
 type State = {
   word: Word;
   level: number;
+  highestLevel?: number;
   buffer: string;
   targetWPM: number;
   targetStreak: number;
@@ -59,7 +60,13 @@ type Action =  {
 } | {
   type: 'NEXT_LEVEL';
 } | {
-  type: 'RESTART_GAME';
+  type: 'JUMP_FORWARDS';
+} | {
+  type: 'JUMP_BACKWARDS';
+} | {
+  type: 'JUMP_START';
+} | {
+  type: 'JUMP_END';
 } | {
   type: 'RESET_STATE';
 };
@@ -78,6 +85,7 @@ const defaultTargetStreak = 3;
 const initialState: State = {
   word: createWord(wordlist[defaultLevel]),
   level: defaultLevel,
+  highestLevel: defaultLevel,
   buffer: '',
   targetWPM: defaultTargetWPM,
   targetStreak: defaultTargetStreak,
@@ -223,7 +231,6 @@ const reducer = (state: State, action: Action): State => {
       if (state.level + 1 === wordlist.length) {
         return {
           ...state,
-          level: state.level + 1,
           finished: true,
           lastSave: Date.now(),
         };
@@ -232,15 +239,61 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         level: state.level + 1,
+        highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
         word: createWord(wordlist[state.level + 1]),
         buffer: '',
         lastSave: Date.now(),
       };
-    case 'RESTART_GAME':
+    case 'JUMP_FORWARDS':
+      if (state.highestLevel === undefined) {
+        return state;
+      }
+
+      const nextLevel = Math.min(state.highestLevel, state.level + 1);
+
       return {
-        ...initialState,
-        targetWPM: state.targetWPM,
-        targetStreak: state.targetStreak,
+        ...state,
+        level: nextLevel,
+        word: createWord(wordlist[nextLevel]),
+        buffer: '',
+        finished: false,
+        lastSave: Date.now(),
+      };
+    case 'JUMP_BACKWARDS':
+      if (state.highestLevel === undefined) {
+        return state;
+      }
+
+      const previousLevel = Math.max(0, state.level - 1);
+
+      return {
+        ...state,
+        level: previousLevel,
+        word: createWord(wordlist[previousLevel]),
+        buffer: '',
+        finished: false,
+        lastSave: Date.now(),
+      };
+    case 'JUMP_START':
+      return {
+        ...state,
+        level: 0,
+        word: createWord(wordlist[0]),
+        buffer: '',
+        finished: false,
+        lastSave: Date.now(),
+      };
+    case 'JUMP_END':
+      if (state.highestLevel === undefined) {
+        return state;
+      }
+
+      return {
+        ...state,
+        level: state.highestLevel,
+        word: createWord(wordlist[state.highestLevel]),
+        buffer: '',
+        finished: false,
         lastSave: Date.now(),
       };
     case 'RESET_STATE':
@@ -278,6 +331,22 @@ export default function Home() {
           inputRef.current.focus();
         }
       }
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+        dispatch({type: 'JUMP_BACKWARDS'});
+      }
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+        dispatch({type: 'JUMP_FORWARDS'});
+      }
+
+      if (e.key === 'Home') {
+        dispatch({type: 'JUMP_START'});
+      }
+
+      if (e.key === 'End') {
+        dispatch({type: 'JUMP_END'});
+      }
     }
 
     window.addEventListener('keydown', handleKeyPress)
@@ -300,6 +369,7 @@ export default function Home() {
 
         dispatch({type: 'LOAD_STATE', payload: {
           ...state,
+          highestLevel: state.highestLevel ?? state.level,
           lastSave: Date.now(),
         }});
       }
@@ -338,8 +408,10 @@ export default function Home() {
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
       {state.finished ? (
         <div className="text-center">
-          <h1 className="text-9xl font-bold text-neutral-50">Congrats!</h1>
-          <button className="px-4 py-2 mt-12 text-lg font-bold text-green-50 bg-green-700 rounded hover:bg-green-600" onClick={() => dispatch({type: 'RESTART_GAME'})}>Start Again</button>
+          <p className="text-8xl">🎉</p>
+          <h1 className="mt-6 text-8xl font-bold text-neutral-50">Congrats!</h1>
+          <p className="mt-8 text-xl font-bold text-neutral-100">You have completed the entire word list.</p>
+          <p className="text-neutral-400">Use your arrow keys to move through the wordlist and continue practicing.</p>
         </div>
       ) : (
         <div className="text-center">
@@ -407,20 +479,20 @@ export default function Home() {
       <div className="fixed flex justify-center bottom-0 w-full px-10 pb-20">
         <div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto">
           {wordlist.map((_, index) => (
-            <div key={index} className={`w-1 h-1 ${index < state.level ? 'bg-green-600' : 'bg-neutral-800'}`}/>
+            <div key={index} className={`w-1 h-1 ${index === state.level ? 'bg-neutral-100 animate-pulse' : index < state.level ? 'bg-green-500' : index <= (state.highestLevel ?? 0) ? 'bg-green-900' : 'bg-neutral-800'}`}/>
           ))}
           <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
             <span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-5 px-3 text-neutral-600 text-sm font-bold uppercase">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mt-0.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mt-0.5">
                 <path fillRule="evenodd" d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 006.75 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.25 6a.75.75 0 00-1.5 0v4.94l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V9.75z" clipRule="evenodd" />
               </svg>
               <span className="mt-1.5">
-                {`Last saved ${lastSaved}`}
+                {`Saved ${lastSaved}`}
               </span>
             </span>
           </div>
           <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 rounded-t-md text-center">
-            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`Words completed (${state.level}/${wordlist.length})`}</span>
+            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`Words discovered (${(state.highestLevel ?? 0) + 1}/${wordlist.length})`}</span>
           </div>
         </div>
       </div>
