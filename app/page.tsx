@@ -363,7 +363,7 @@ export default function Home() {
       )}
       <div className="fixed flex justify-center top-0 right-0 w-full p-10">
         <div className="relative inline-flex flex-wrap justify-center items-center gap-4 mx-auto">
-          {[30, 60, 90, 120].map((wpm, index) => (
+          {[30, 60, 90, 120, 200, 500, 1000].map((wpm, index) => (
             <button
               key={index}
               className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${wpm === state.targetWPM ? 'border-green-500 text-green-400 bg-green-950 shadow-md shadow-green-800' : 'border-neutral-700 text-neutral-400'} hover:border-green-500 hover:text-green-400`}
@@ -374,7 +374,7 @@ export default function Home() {
             </button>
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
-          {[1, 3, 5, 10].map((streak, index) => (
+          {[1, 3, 5, 10, 25].map((streak, index) => (
             <button
               key={index}
               className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${streak === state.targetStreak ? 'border-sky-400 text-sky-400 bg-sky-950 shadow-md shadow-sky-800' : 'border-neutral-700 text-neutral-400'} hover:border-sky-400 hover:text-sky-400`}
