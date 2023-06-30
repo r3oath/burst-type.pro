@@ -407,6 +407,7 @@ export default function Home() {
         dispatch({type: 'LOAD_STATE', payload: {
           ...state,
           highestLevel: state.highestLevel ?? state.level,
+          showInstructions: state.showInstructions ?? true,
           lastSave: Date.now(),
         }});
       } else {
