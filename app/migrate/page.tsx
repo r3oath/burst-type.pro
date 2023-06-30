@@ -3,7 +3,7 @@
 import {useEffect} from "react";
 import {useSearchParams} from "next/navigation";
 import {useRouter} from 'next/navigation';
-import {initialState, createWord} from "../page";
+import {createWord, initialState} from "@app/config/state";
 import wordlist from '../../config/wordlist.json';
 
 export default function Migrate() {
