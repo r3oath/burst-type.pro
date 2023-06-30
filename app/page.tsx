@@ -170,7 +170,7 @@ export default function Home() {
         </p>
         <div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
           {Array.from({length: state.targetStreak}).map((_, index) => (
-            <div key={index} className={`w-4 h-4 ${state.word.wpm !== undefined && !state.word.match ? 'bg-red-600' : index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+            <div key={index} className={`w-4 h-4 ${state.word.wpm !== undefined && (!state.word.match || state.word.wpm < state.targetWPM) ? 'bg-red-600' : index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
           ))}
         </div>
       </div>
@@ -185,7 +185,7 @@ export default function Home() {
               onClick={() => dispatch({type: 'SET_TARGET_WPM', payload: wpm})}
             >
               <span className="font-bold text-lg">{wpm}</span>
-              <span className="text-xs uppercase">WPM</span>
+              <span className="text-xs uppercase opacity-60">WPM</span>
             </button>
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
@@ -197,7 +197,7 @@ export default function Home() {
               onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
             >
               <span className="font-bold text-lg">{streak}</span>
-              <span className="text-xs uppercase">Streak</span>
+              <span className="text-xs uppercase opacity-60">Streak</span>
             </button>
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
@@ -207,7 +207,7 @@ export default function Home() {
             onClick={handleSave}
           >
             <span className="font-bold text-lg">S</span>
-            <span className="text-xs uppercase">Save</span>
+            <span className="text-xs uppercase opacity-60">Save</span>
           </button>
           <button
             type="button"
@@ -215,7 +215,7 @@ export default function Home() {
             onClick={handleReset}
           >
             <span className="font-bold text-lg">R</span>
-            <span className="text-xs uppercase">Reset</span>
+            <span className="text-xs uppercase opacity-60">Reset</span>
           </button>
           <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
             <span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm">options</span>
