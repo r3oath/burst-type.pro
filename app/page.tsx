@@ -1,7 +1,13 @@
 'use client'
 
-import {useEffect, useReducer, useState, useRef} from "react"
-import wordlist from '../config/wordlist.json'
+import {useEffect, useReducer, useState, useRef} from "react";
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+import wordlist from '../config/wordlist.json';
+
+TimeAgo.addDefaultLocale(en);
+
+const timeAgo = new TimeAgo('en-US');
 
 type Character = {
   character: string;
@@ -28,7 +34,9 @@ type State = {
   lastSave?: number;
 }
 
-type Action = {
+type Action =  {
+  type: 'SAVE_STATE';
+} | {
   type: 'LOAD_STATE';
   payload: State;
 } | {
@@ -78,6 +86,11 @@ const initialState: State = {
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'SAVE_STATE':
+      return {
+        ...state,
+        lastSave: Date.now(),
+      };
     case 'LOAD_STATE':
       return action.payload;
     case 'SET_TARGET_STREAK':
@@ -231,7 +244,10 @@ const reducer = (state: State, action: Action): State => {
         lastSave: Date.now(),
       };
     case 'RESET_STATE':
-      return initialState;
+      return {
+        ...initialState,
+        lastSave: Date.now(),
+      };
     default:
       return state;
   }
@@ -240,6 +256,7 @@ const reducer = (state: State, action: Action): State => {
 export default function Home() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [loadedState, setLoadedState] = useState(false);
+  const [lastSaved, setLastSaved] = useState('never');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -279,12 +296,29 @@ export default function Home() {
       const localStorageState = localStorage.getItem('state');
 
       if (localStorageState) {
-        dispatch({type: 'LOAD_STATE', payload: JSON.parse(localStorageState)});
+        const state = JSON.parse(localStorageState);
+
+        dispatch({type: 'LOAD_STATE', payload: {
+          ...state,
+          lastSave: Date.now(),
+        }});
       }
 
       setLoadedState(true);
     }
   }, [loadedState, state.lastSave]);
+
+  useEffect(() => {
+    setLastSaved(timeAgo.format(state.lastSave ?? 0));
+
+    const interval = setInterval(() => {
+      setLastSaved(timeAgo.format(state.lastSave ?? 0));
+    }, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [state.lastSave]);
 
   const handleReset = () => {
     if (!confirm('Are you sure you want to reset your progress?')) {
@@ -337,7 +371,7 @@ export default function Home() {
           {[1, 3, 5, 10].map((streak, index) => (
             <button
               key={index}
-              className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${streak === state.targetStreak ? 'border-blue-400 text-blue-400 bg-blue-950 shadow-md shadow-blue-800' : 'border-neutral-700 text-neutral-400'} hover:border-blue-400 hover:text-blue-400`}
+              className={`flex flex-col items-center w-16 py-3 border-2 rounded-md ${streak === state.targetStreak ? 'border-sky-400 text-sky-400 bg-sky-950 shadow-md shadow-sky-800' : 'border-neutral-700 text-neutral-400'} hover:border-sky-400 hover:text-sky-400`}
               onClick={() => dispatch({type: 'SET_TARGET_STREAK', payload: streak})}
             >
               <span className="font-bold text-lg">{streak}</span>
@@ -346,10 +380,17 @@ export default function Home() {
           ))}
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
           <button
+            className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-green-500 hover:bg-green-950 hover:text-green-400 hover:shadow-md hover:shadow-green-800 rounded-md"
+            onClick={() => dispatch({type: 'SAVE_STATE'})}
+          >
+            <span className="font-bold text-lg">S</span>
+            <span className="text-xs uppercase">Save</span>
+          </button>
+          <button
             className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-red-500 hover:bg-red-950 hover:text-red-400 hover:shadow-md hover:shadow-red-800 rounded-md"
             onClick={handleReset}
           >
-            <span className="font-bold text-lg">X</span>
+            <span className="font-bold text-lg">R</span>
             <span className="text-xs uppercase">Reset</span>
           </button>
           <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
@@ -357,13 +398,23 @@ export default function Home() {
           </div> 
         </div>
       </div>
-      <div className="fixed flex justify-center bottom-0 w-full p-10">
+      <div className="fixed flex justify-center bottom-0 w-full px-10 pb-20">
         <div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto">
           {wordlist.map((_, index) => (
             <div key={index} className={`w-1 h-1 ${index < state.level ? 'bg-green-600' : 'bg-neutral-800'}`}/>
           ))}
+          <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
+            <span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-5 px-3 text-neutral-600 text-sm font-bold uppercase">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mt-0.5">
+                <path fillRule="evenodd" d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 006.75 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.25 6a.75.75 0 00-1.5 0v4.94l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V9.75z" clipRule="evenodd" />
+              </svg>
+              <span className="mt-1.5">
+                {`Last saved ${lastSaved}`}
+              </span>
+            </span>
+          </div>
           <div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-800 rounded-t-md text-center">
-            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`words (${state.level}/${wordlist.length})`}</span>
+            <span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm">{`Words completed (${state.level}/${wordlist.length})`}</span>
           </div>
         </div>
       </div>
