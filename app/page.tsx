@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useReducer, useState, useRef} from "react";
+import {useRouter} from 'next/navigation';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import wordlist from '../config/wordlist.json';
@@ -74,7 +75,7 @@ type Action =  {
   type: 'TOGGLE_INSTRUCTIONS';
 };
 
-const createWord = (raw: string): Word => ({
+export const createWord = (raw: string): Word => ({
   characters: raw.toLowerCase().split('').map(character => ({character})),
   match: false,
   hitTargetWPM: false,
@@ -85,7 +86,7 @@ const defaultLevel = 0;
 const defaultTargetWPM = 60;
 const defaultTargetStreak = 3;
 
-const initialState: State = {
+export const initialState: State = {
   word: createWord(wordlist[defaultLevel]),
   level: defaultLevel,
   highestLevel: defaultLevel,
@@ -348,6 +349,7 @@ export default function Home() {
   const [loadedState, setLoadedState] = useState(false);
   const [lastSaved, setLastSaved] = useState('never');
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -396,8 +398,6 @@ export default function Home() {
   useEffect(() => {
     const isOnLegacyDomain = window.location.hostname === 'descent-typing.vercel.app';
 
-    console.log('isOnLegacyDomain', isOnLegacyDomain);
-    
     if (loadedState) {
       localStorage.setItem('state', JSON.stringify(state));
     }
@@ -407,14 +407,31 @@ export default function Home() {
 
       if (localStorageState) {
         const state = JSON.parse(localStorageState);
-
-        dispatch({type: 'LOAD_STATE', payload: {
+        const payload = {
+          ...initialState,
           ...state,
           highestLevel: state.highestLevel ?? state.level,
           showInstructions: state.showInstructions ?? true,
           lastSave: Date.now(),
-        }});
+        };
+
+        if (isOnLegacyDomain) {
+          const base64State = btoa(JSON.stringify({
+            level: payload.level,
+            highestLevel: payload.highestLevel,
+            targetWPM: payload.targetWPM,
+            targetStreak: payload.targetStreak,
+          }));
+
+          router.push(`https://www.burst-type.pro/migrate?s=${base64State}`);
+        }
+
+        dispatch({type: 'LOAD_STATE', payload});
       } else {
+        if (isOnLegacyDomain) {
+          router.push('https://www.burst-type.pro/');
+        }
+
         dispatch({type: 'LOAD_STATE', payload: {
           ...initialState,
           lastSave: Date.now(),
