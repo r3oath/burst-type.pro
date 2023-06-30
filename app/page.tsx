@@ -328,6 +328,12 @@ export default function Home() {
     dispatch({type: 'RESET_STATE'})
   };
 
+  const handleSave = () => {
+    dispatch({type: 'SAVE_STATE'});
+
+    alert('Your progress and settings have been saved!');
+  };
+
   return (
     <main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
       {state.finished ? (
@@ -381,7 +387,7 @@ export default function Home() {
           <div className="h-10 border-l-2 border-neutral-800 mx-4"/>
           <button
             className="flex flex-col items-center w-16 py-3 border-2 border-neutral-700 text-neutral-400 hover:border-green-500 hover:bg-green-950 hover:text-green-400 hover:shadow-md hover:shadow-green-800 rounded-md"
-            onClick={() => dispatch({type: 'SAVE_STATE'})}
+            onClick={handleSave}
           >
             <span className="font-bold text-lg">S</span>
             <span className="text-xs uppercase">Save</span>
