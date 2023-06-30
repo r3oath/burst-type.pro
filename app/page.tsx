@@ -372,6 +372,11 @@ export default function Home() {
           highestLevel: state.highestLevel ?? state.level,
           lastSave: Date.now(),
         }});
+      } else {
+        dispatch({type: 'LOAD_STATE', payload: {
+          ...initialState,
+          lastSave: Date.now(),
+        }});
       }
 
       setLoadedState(true);
