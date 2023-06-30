@@ -394,6 +394,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const isOnLegacyDomain = window.location.hostname === 'descent-typing.vercel.app';
+
+    console.log('isOnLegacyDomain', isOnLegacyDomain);
+    
     if (loadedState) {
       localStorage.setItem('state', JSON.stringify(state));
     }
