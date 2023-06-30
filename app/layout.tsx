@@ -6,12 +6,12 @@ import { Analytics } from '@vercel/analytics/react';
 const fira = Fira_Mono({ subsets: ['latin'], weight: ['400', '700'] })
 
 export const metadata: Metadata = {
-  title: 'Descent Type Training',
-  description: 'Practice typing the most common English words to build burst speed and muscle memory.',
+  title: 'Burst Type Pro',
+  description: 'Practice typing the most common words to build burst speed and muscle memory.',
   openGraph: {
     type: 'website',
-    title: 'Descent Type Training',
-    description: 'Practice typing the most common English words to build burst speed and muscle memory.',
+    title: 'Burst Type Pro',
+    description: 'Practice typing the most common words to build burst speed and muscle memory.',
     images: ['https://descent-typing.vercel.app/images/descent.jpg'],
     url: 'https://descent-typing.vercel.app',
   },
