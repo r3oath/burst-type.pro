@@ -230,12 +230,9 @@ export default function Home() {
             <div key={index} className={`w-1 h-1 ${index === state.level ? 'bg-neutral-100 animate-pulse' : index < state.level ? 'bg-green-500' : index <= (state.highestLevel ?? 0) ? 'bg-green-900' : 'bg-neutral-800'}`}/>
           ))}
           <div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
-            <span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-5 px-3 text-neutral-600 text-sm font-bold uppercase">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 mt-0.5">
-                <path fillRule="evenodd" d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 006.75 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.25 6a.75.75 0 00-1.5 0v4.94l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75 0 10-1.06-1.06l-1.72 1.72V9.75z" clipRule="evenodd" />
-              </svg>
+            <span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-5 px-3 text-neutral-700 text-xs font-bold uppercase">
               <span className="mt-1.5">
-                {`Saved ${lastSaved}`}
+                {`Last saved ${lastSaved}`}
               </span>
             </span>
           </div>
