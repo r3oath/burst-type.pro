@@ -90,6 +90,8 @@ export default function Home() {
             targetStreak: payload.targetStreak,
           }));
 
+          localStorage.removeItem('state');
+
           router.push(`https://www.burst-type.pro/migrate?s=${base64State}`);
         }
 
