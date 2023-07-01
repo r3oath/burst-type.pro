@@ -35,8 +35,8 @@ export const createWord = (raw: string): Word => ({
 });
 
 export const defaultLevel = 0;
-export const defaultTargetWPM = 60;
-export const defaultTargetStreak = 3;
+export const defaultTargetWPM = 90;
+export const defaultTargetStreak = 5;
 
 export const initialState: State = {
   word: createWord(wordlist[defaultLevel]),
