@@ -12,8 +12,8 @@ export const metadata: Metadata = {
     type: 'website',
     title: 'Burst Type Pro',
     description: 'Practice typing the most common words to build burst speed and muscle memory.',
-    images: ['https://descent-typing.vercel.app/images/descent.jpg'],
-    url: 'https://descent-typing.vercel.app',
+    images: ['https://www.burst-type.pro/images/descent.jpg'],
+    url: 'https://www.burst-type.pro/',
   },
 }
 
