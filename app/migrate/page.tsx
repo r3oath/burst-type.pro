@@ -11,6 +11,13 @@ export default function Migrate() {
   const router = useRouter();
 
   useEffect(() => {
+    const localStorageState = localStorage.getItem('state');
+
+    if (localStorageState) {
+      router.push("/");
+      return;
+    }
+
     const s = params.get("s");
 
     if (s) {
