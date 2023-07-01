@@ -167,12 +167,12 @@ export default function Home() {
           ))}
           <input ref={inputRef} className="sr-only" type="text"/>
         </p>
-        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.wpm >= state.targetWPM ? 'text-green-600' : 'text-red-600'} ${state.word.startTime !== undefined && state.word.wpm === undefined ? 'italic animate-pulse' : ''}`}>
+        <p className={`text-3xl mt-6 ${state.word.wpm === undefined ? 'text-neutral-600' : state.word.match && state.word.hitTargetWPM ? 'text-green-600' : 'text-red-600'} ${state.word.startTime !== undefined && state.word.wpm === undefined ? 'italic animate-pulse' : ''}`}>
           {state.word.wpm !== undefined ? `${state.word.wpm} WPM` : state.word.startTime === undefined ? 'Ready' : '>>> GO >>>'}
         </p>
         <div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
           {Array.from({length: state.targetStreak}).map((_, index) => (
-            <div key={index} className={`w-4 h-4 ${state.word.wpm !== undefined && (!state.word.match || state.word.wpm < state.targetWPM) ? 'bg-red-600' : index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
+            <div key={index} className={`w-4 h-4 ${state.word.wpm !== undefined && (!state.word.match || !state.word.hitTargetWPM) ? 'bg-red-600' : index < state.word.streak ? 'bg-green-600' : 'bg-neutral-700'}`}/>
           ))}
         </div>
       </div>
