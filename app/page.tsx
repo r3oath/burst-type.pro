@@ -93,9 +93,9 @@ export default function Home() {
           localStorage.removeItem('state');
 
           router.push(`https://www.burst-type.pro/migrate?s=${base64State}`);
+        } else {
+          dispatch({type: 'LOAD_STATE', payload});
         }
-
-        dispatch({type: 'LOAD_STATE', payload});
       } else {
         if (isOnLegacyDomain) {
           router.push('https://www.burst-type.pro/');
