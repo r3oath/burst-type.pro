@@ -22,7 +22,7 @@ const Migrate = (): React.ReactElement => {
 		const s = parameters.get('s');
 
 		if (s !== null) {
-			const data = JSON.parse(atob(s))	as Optional<State>;
+			const data = JSON.parse(atob(s)) as Optional<State>;
 			const state = {
 				...initialState,
 				...data,
