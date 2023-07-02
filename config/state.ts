@@ -33,7 +33,7 @@ type State = {
 
 const createWord = (raw: string): Word => ({
 	// eslint-disable-next-line unicorn/prefer-spread
-	characters: raw.toLowerCase().split('').map(character => ({character})),
+	characters: `${raw} `.toLowerCase().split('').map(character => ({character})),
 	match: false,
 	hitTargetWPM: false,
 	streak: 0,
@@ -60,9 +60,7 @@ const initialState: State = {
 type Action = {
 	type: 'APPEND_BUFFER';
 	payload: string;
-} | {
-	type: 'BACKSPACE_BUFFER';
-} | {
+} |{
 	type: 'JUMP_BACKWARDS';
 } | {
 	type: 'JUMP_END';
@@ -74,9 +72,9 @@ type Action = {
 	type: 'LOAD_STATE';
 	payload: State;
 } | {
-	type: 'NEXT_LEVEL';
-} | {
 	type: 'RESET_STATE';
+} | {
+	type: 'RESET_WORD';
 } | {
 	type: 'SAVE_STATE';
 } | {
@@ -140,24 +138,50 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			if (state.word.endTime !== undefined) {
+			if (state.finished) {
+				return state;
+			}
+
+			if (state.buffer.length === 0 && action.payload === ' ') {
+				return state;
+			}
+
+			if (state.buffer.length === state.word.characters.length && action.payload === ' ') {
+				return state;
+			}
+
+			if (state.word.streak >= state.targetStreak) {
 				return state;
 			}
 
 			const appendBuffer = state.buffer + action.payload;
+			// eslint-disable-next-line unicorn/prefer-spread
+			const match = appendBuffer.split('').every((character, index) => character === state.word.characters[index].character);
+			const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
+			const hitTargetWPM = wpm >= state.targetWPM;
 
-			if (appendBuffer.length >= state.word.characters.length) {
-				const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
-				const match = state.word.characters.every((character, index) => character.character === appendBuffer[index]);
-				const hitTargetWPM = wpm >= state.targetWPM;
-
+			if (!match) {
 				return {
 					...state,
-					buffer: appendBuffer,
+					word: {
+						...createWord(wordlist[state.level]),
+						endTime: Date.now(),
+						match,
+						wpm,
+						hitTargetWPM,
+					},
+					buffer: '',
+				};
+			}
+
+			if (state.word.endTime === undefined && appendBuffer.length >= state.word.characters.length) {
+				return {
+					...state,
+					buffer: '',
 					word: {
 						...state.word,
 						endTime: Date.now(),
-						streak: hitTargetWPM && match ? state.word.streak + 1 : 0,
+						streak: hitTargetWPM ? state.word.streak + 1 : 0,
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -172,49 +196,71 @@ const reducer = (state: State, action: Action): State => {
 				};
 			}
 
-			return {
-				...state,
-				buffer: appendBuffer,
-				word: {
-					...state.word,
-					startTime: state.word.startTime ?? Date.now(),
-					characters: state.word.characters.map((character, index) => ({
-						...character,
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-						correct: appendBuffer[index] === undefined
-							? undefined
-							: character.character === appendBuffer[index],
-					})),
-				},
-			};
-		}
-		case 'BACKSPACE_BUFFER': {
-			if (state.showInstructions) {
+			if (state.word.endTime === undefined && appendBuffer.length < state.word.characters.length) {
+				return {
+					...state,
+					buffer: appendBuffer,
+					word: {
+						...state.word,
+						startTime: state.word.startTime ?? Date.now(),
+						characters: state.word.characters.map((character, index) => ({
+							...character,
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							correct: appendBuffer[index] === undefined
+								? undefined
+								: character.character === appendBuffer[index],
+						})),
+					},
+				};
+			}
+
+			if (state.word.wpm === undefined) {
 				return state;
 			}
 
-			if (state.word.endTime !== undefined) {
-				return state;
+			const nextBuffer = action.payload;
+			const repeatWord = createWord(wordlist[state.level]);
+
+			if (!state.word.match || state.word.wpm < state.targetWPM) {
+				return {
+					...state,
+					word: {
+						...repeatWord,
+						startTime: Date.now(),
+						characters: repeatWord.characters.map((character, index) => ({
+							...character,
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							correct: nextBuffer[index] === undefined
+								? undefined
+								: character.character === nextBuffer[index],
+						})),
+					},
+					buffer: nextBuffer,
+				};
 			}
 
-			const backspaceBuffer = state.buffer.slice(0, -1);
+			if (state.word.streak < state.targetStreak) {
+				return {
+					...state,
+					word: {
+						...repeatWord,
+						startTime: Date.now(),
+						characters: repeatWord.characters.map((character, index) => ({
+							...character,
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							correct: nextBuffer[index] === undefined
+								? undefined
+								: character.character === nextBuffer[index],
+						})),
+						streak: state.word.streak,
+					},
+					buffer: nextBuffer,
+				};
+			}
 
-			return {
-				...state,
-				buffer: backspaceBuffer,
-				word: {
-					...state.word,
-					characters: state.word.characters.map((character, index) => ({
-						...character,
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-						correct: backspaceBuffer[index] === undefined
-							? undefined
-							: character.character === backspaceBuffer[index],
-					})),
-				},
-			};
+			return state;
 		}
-		case 'NEXT_LEVEL': {
+		case 'RESET_WORD': {
 			if (state.showInstructions) {
 				return state;
 			}
@@ -223,33 +269,10 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			if (state.buffer.length < state.word.characters.length) {
-				return {
-					...state,
-					word: createWord(wordlist[state.level]),
-					buffer: '',
-				};
-			}
-
-			if (state.word.wpm === undefined) {
-				return state;
-			}
-
-			if (!state.word.match || state.word.wpm < state.targetWPM) {
-				return {
-					...state,
-					word: createWord(wordlist[state.level]),
-					buffer: '',
-				};
-			}
-
 			if (state.word.streak < state.targetStreak) {
 				return {
 					...state,
-					word: {
-						...createWord(wordlist[state.level]),
-						streak: state.word.streak,
-					},
+					word: createWord(wordlist[state.level]),
 					buffer: '',
 				};
 			}
