@@ -1,13 +1,17 @@
 import {useMemo} from 'react';
-import type {Character, Word} from '@app/config/state';
+import type {Character, State} from '@app/config/state';
 
 type WordProperties = {
-	word: Word;
+	state: State;
 	targetStreak: number;
 };
 
-const characterClasses = (character: Character): string => {
-	if (character.correct === undefined) {
+const characterClasses = (state: State, character: Character): string => {
+	if (state.word.streak === state.targetStreak) {
+		return 'text-green-500';
+	}
+
+	if (state.word.endTime !== undefined || character.correct === undefined) {
 		return 'text-neutral-600';
 	}
 
@@ -18,68 +22,68 @@ const characterClasses = (character: Character): string => {
 	return 'text-red-600';
 };
 
-const wpmIndicatorClasses = (word: Word): string => {
-	if (word.wpm === undefined) {
+const wpmIndicatorClasses = (state: State): string => {
+	if (state.word.wpm === undefined) {
 		return 'text-neutral-600';
 	}
 
-	if (word.match && word.hitTargetWPM) {
+	if (state.word.match && state.word.hitTargetWPM) {
 		return 'text-green-600';
 	}
 
 	return 'text-red-600';
 };
 
-const wpmIndicatorAnimationClasses = (word: Word): string => {
-	if (word.startTime !== undefined && word.wpm === undefined) {
+const wpmIndicatorAnimationClasses = (state: State): string => {
+	if (state.word.startTime !== undefined && state.word.wpm === undefined) {
 		return 'italic animate-pulse';
 	}
 
 	return '';
 };
 
-const streakIndicatorClasses = (word: Word, index: number): string => {
-	if (word.wpm !== undefined && (!word.match || !word.hitTargetWPM)) {
+const streakIndicatorClasses = (state: State, index: number): string => {
+	if (state.word.wpm !== undefined && (!state.word.match || !state.word.hitTargetWPM)) {
 		return 'bg-red-600';
 	}
 
-	if (index < word.streak) {
+	if (index < state.word.streak) {
 		return 'bg-green-600';
 	}
 
 	return 'bg-neutral-700';
 };
 
-const WordVisualiser = ({word, targetStreak}: WordProperties): React.ReactElement => {
+const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactElement => {
 	const wpmIndicator = useMemo(() => {
-		if (word.wpm !== undefined) {
-			return `${word.wpm} WPM`;
+		if (state.word.wpm !== undefined) {
+			return `${state.word.wpm} WPM`;
 		}
 
-		if (word.startTime !== undefined) {
+		if (state.word.startTime !== undefined) {
 			return '>>> GO >>>';
 		}
 
 		return 'Ready';
-	}, [word.wpm, word.startTime]);
+	}, [state.word.wpm, state.word.startTime]);
 
 	return (
 		<div className="text-center">
 			<p className="text-9xl font-bold tracking-wider">
-				{word.characters.map((character, index) => (
+				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
-					<span key={index} className={characterClasses(character)}>
+					<span key={index} className={characterClasses(state, character)}>
 						{character.character}
 					</span>
 				))}
 			</p>
-			<p className={`text-3xl mt-6 ${wpmIndicatorClasses(word)} ${wpmIndicatorAnimationClasses(word)}`}>
+			<p className={`text-3xl mt-6 ${wpmIndicatorClasses(state)} ${wpmIndicatorAnimationClasses(state)}`}>
 				{wpmIndicator}
 			</p>
 			<div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
 				{Array.from({length: targetStreak}).map((_, index) => (
 					// eslint-disable-next-line react/no-array-index-key
-					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(word, index)}`}/>
+					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
 		</div>

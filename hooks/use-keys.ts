@@ -3,9 +3,8 @@
 import {useEffect} from 'react';
 
 type UseKeysProperties = {
-	onAlpha: (key: string) => void;
-	onBackspace: () => void;
-	onNext: () => void;
+	onType: (key: string) => void;
+	onResetWord: () => void;
 	onJumpBackwards: () => void;
 	onJumpForwards: () => void;
 	onJumpStart: () => void;
@@ -13,22 +12,18 @@ type UseKeysProperties = {
 };
 
 const useKeys = ({
-	onAlpha, onBackspace, onNext, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd,
+	onType, onResetWord, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd,
 }: UseKeysProperties): void => {
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent): void => {
 			event.preventDefault();
 
-			if (/^[a-z]$/.test(event.key)) {
-				onAlpha(event.key);
+			if (event.key === ' ' || /^[a-z]$/.test(event.key)) {
+				onType(event.key);
 			}
 
-			if (event.key === 'Backspace') {
-				onBackspace();
-			}
-
-			if (event.key === ' ' || event.key === 'Tab' || event.key === 'Enter') {
-				onNext();
+			if (event.key === 'Tab' || event.key === 'Enter') {
+				onResetWord();
 			}
 
 			if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
@@ -53,7 +48,7 @@ const useKeys = ({
 		return () => {
 			window.removeEventListener('keydown', handleKeyPress);
 		};
-	}, [onAlpha, onBackspace, onJumpBackwards, onJumpEnd, onJumpForwards, onJumpStart, onNext]);
+	}, [onType, onJumpBackwards, onJumpEnd, onJumpForwards, onJumpStart, onResetWord]);
 };
 
 export default useKeys;

@@ -21,12 +21,8 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'APPEND_BUFFER', payload: key});
 	}, []);
 
-	const onBackspace = useCallback((): void => {
-		dispatch({type: 'BACKSPACE_BUFFER'});
-	}, []);
-
-	const onNext = useCallback((): void => {
-		dispatch({type: 'NEXT_LEVEL'});
+	const onResetWord = useCallback((): void => {
+		dispatch({type: 'RESET_WORD'});
 
 		if (inputReference.current) {
 			inputReference.current.focus();
@@ -49,7 +45,7 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'JUMP_END'});
 	}, []);
 
-	useKeys({onAlpha, onBackspace, onNext, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd});
+	useKeys({onType: onAlpha, onResetWord, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd});
 
 	const handleTargetWPMChange = useCallback((wpm: number) => (): void => {
 		dispatch({type: 'SET_TARGET_WPM', payload: wpm});
@@ -84,7 +80,7 @@ const Home = (): React.ReactElement => {
 	return (
 		<main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
 			{state.finished && <Finished/>}
-			{!state.finished && <WordVisualiser word={state.word} targetStreak={state.targetStreak}/>}
+			{!state.finished && <WordVisualiser state={state} targetStreak={state.targetStreak}/>}
 			<input ref={inputReference} className="sr-only" type="text"/>
 			<Menu
 				state={state}
