@@ -47,6 +47,15 @@ const Menu = ({
 				<div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-800 rounded-b-md text-center">
 					<span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm">options</span>
 				</div>
+				{window.location.hostname !== 'www.burst-type.pro' && (
+					<div className="absolute h-4 bottom-0 -mb-24 w-full text-center">
+						<span className="text-sm text-yellow-400 px-4 py-2 border border-yellow-400 rounded-md">
+							<span>You are on an experimental build, view the latest stable version at</span>
+							{' '}
+							<a className="underline" href="https://www.burst-type.pro">burst-type.pro</a>
+						</span>
+					</div>
+				)}
 			</div>
 		</div>
 	);
