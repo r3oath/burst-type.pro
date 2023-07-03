@@ -74,8 +74,6 @@ type Action = {
 } | {
 	type: 'RESET_STATE';
 } | {
-	type: 'RESET_WORD';
-} | {
 	type: 'SAVE_STATE';
 } | {
 	type: 'SET_CHARACTERS';
@@ -146,10 +144,6 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			if (state.buffer.length === state.word.characters.length && action.payload === ' ') {
-				return state;
-			}
-
 			if (state.word.streak >= state.targetStreak) {
 				return state;
 			}
@@ -175,13 +169,34 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			if (state.word.endTime === undefined && appendBuffer.length >= state.word.characters.length) {
+				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
+
+				if (streak >= state.targetStreak) {
+					if (state.level + 1 === wordlist.length) {
+						return {
+							...state,
+							finished: true,
+							lastSave: Date.now(),
+						};
+					}
+
+					return {
+						...state,
+						level: state.level + 1,
+						highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
+						word: createWord(wordlist[state.level + 1]),
+						buffer: '',
+						lastSave: Date.now(),
+					};
+				}
+
 				return {
 					...state,
 					buffer: '',
 					word: {
 						...state.word,
 						endTime: Date.now(),
-						streak: hitTargetWPM ? state.word.streak + 1 : 0,
+						streak,
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -259,40 +274,6 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			return state;
-		}
-		case 'RESET_WORD': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.finished) {
-				return state;
-			}
-
-			if (state.word.streak < state.targetStreak) {
-				return {
-					...state,
-					word: createWord(wordlist[state.level]),
-					buffer: '',
-				};
-			}
-
-			if (state.level + 1 === wordlist.length) {
-				return {
-					...state,
-					finished: true,
-					lastSave: Date.now(),
-				};
-			}
-
-			return {
-				...state,
-				level: state.level + 1,
-				highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
-				word: createWord(wordlist[state.level + 1]),
-				buffer: '',
-				lastSave: Date.now(),
-			};
 		}
 		case 'JUMP_FORWARDS': {
 			if (state.showInstructions) {

@@ -70,13 +70,6 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 	return (
 		<div className="text-center">
 			<p className="relative text-9xl font-bold tracking-wider">
-				{state.word.streak < state.targetStreak && (state.word.startTime === undefined || state.word.wpm !== undefined) && (
-					<div className="absolute top-[50%] -translate-y-[30%] -translate-x-[130%] left-0 animate-pulse text-neutral-100">
-						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
-							<path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/>
-						</svg>
-					</div>
-				)}
 				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
 					<span key={index} className={characterClasses(state, character)}>

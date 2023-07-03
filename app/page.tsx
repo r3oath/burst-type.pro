@@ -1,6 +1,6 @@
 'use client';
 
-import {useReducer, useRef, useCallback} from 'react';
+import {useReducer, useCallback} from 'react';
 import wordlist from '../config/wordlist.json';
 import type {State} from '@app/config/state';
 import {initialState, reducer} from '@app/config/state';
@@ -9,7 +9,6 @@ import {useKeys, useSaveState} from '@app/hooks';
 
 const Home = (): React.ReactElement => {
 	const [state, dispatch] = useReducer(reducer, initialState);
-	const inputReference = useRef<HTMLInputElement>(null);
 
 	const onLoadState = useCallback((state: State): void => {
 		dispatch({type: 'LOAD_STATE', payload: state});
@@ -19,14 +18,6 @@ const Home = (): React.ReactElement => {
 
 	const onAlpha = useCallback((key: string): void => {
 		dispatch({type: 'APPEND_BUFFER', payload: key});
-	}, []);
-
-	const onResetWord = useCallback((): void => {
-		dispatch({type: 'RESET_WORD'});
-
-		if (inputReference.current) {
-			inputReference.current.focus();
-		}
 	}, []);
 
 	const onJumpBackwards = useCallback((): void => {
@@ -45,7 +36,7 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'JUMP_END'});
 	}, []);
 
-	useKeys({onType: onAlpha, onResetWord, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd});
+	useKeys({onType: onAlpha, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd});
 
 	const handleTargetWPMChange = useCallback((wpm: number) => (): void => {
 		dispatch({type: 'SET_TARGET_WPM', payload: wpm});
@@ -81,7 +72,6 @@ const Home = (): React.ReactElement => {
 		<main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
 			{state.finished && <Finished/>}
 			{!state.finished && <WordVisualiser state={state} targetStreak={state.targetStreak}/>}
-			<input ref={inputReference} className="sr-only" type="text"/>
 			<Menu
 				state={state}
 				onTargetWPMChange={handleTargetWPMChange}
