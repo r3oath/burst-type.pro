@@ -34,14 +34,7 @@ const Instructions = ({onGetStarted: handleToggleInstructions}: InstructionsProp
 				{' '}
 				<span className="bg-neutral-700 text-neutral-200 tracking-wider px-2 py-0.5 rounded-md">spacebar</span>
 				{' '}
-				<span>at the end of a word is required to complete it.</span>
-			</p>
-			<p className="mt-4 text-neutral-400 max-w-3xl mx-auto">
-				<span>Pressing</span>
-				{' '}
-				<span className="bg-neutral-700 text-neutral-200 tracking-wider px-2 py-0.5 rounded-md">tab/enter</span>
-				{' '}
-				<span>after you have successfully completed the streak will unlock (discover) the next word in the list.</span>
+				<span>at the end of a word is required to complete it. You can immediately start typing the word again once it has succeeded or failed.</span>
 			</p>
 			<p className="mt-4 text-neutral-400 max-w-3xl mx-auto">
 				<span>You can use the</span>
@@ -52,7 +45,7 @@ const Instructions = ({onGetStarted: handleToggleInstructions}: InstructionsProp
 				{' '}
 				<span className="bg-neutral-700 text-neutral-200 tracking-wider px-2 py-0.5 rounded-md">right/up</span>
 				{' '}
-				<span>arrow keys to move backwards and forwards through your discovered words. Jump to back to the start or to your latest discovered word using the</span>
+				<span>arrow keys to move backwards and forwards through your discovered words. You can jump back to the start or your latest discovered word using the</span>
 				{' '}
 				<span className="bg-neutral-700 text-neutral-200 tracking-wider px-2 py-0.5 rounded-md">home</span>
 				{' '}
