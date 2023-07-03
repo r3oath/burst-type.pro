@@ -11,27 +11,19 @@ const characterClasses = (state: State, character: Character): string => {
 		return 'text-green-500';
 	}
 
-	if (state.word.endTime !== undefined || character.correct === undefined) {
+	if (state.word.wpm !== undefined && state.word.hitTargetWPM) {
+		return 'text-green-500';
+	}
+
+	if (state.word.wpm !== undefined && !state.word.hitTargetWPM) {
+		return 'text-red-600';
+	}
+
+	if (character.correct === undefined) {
 		return 'text-neutral-600';
 	}
 
-	if (character.correct) {
-		return 'text-neutral-50';
-	}
-
-	return 'text-red-600';
-};
-
-const statusIndicatorClasses = (state: State): string => {
-	if (state.word.wpm === undefined) {
-		return 'text-neutral-600';
-	}
-
-	if (state.word.match && state.word.hitTargetWPM) {
-		return 'text-green-600';
-	}
-
-	return 'text-red-600';
+	return 'text-neutral-50';
 };
 
 const statusIndicatorAnimationClasses = (state: State): string => {
@@ -52,7 +44,7 @@ const streakIndicatorClasses = (state: State, index: number): string => {
 	}
 
 	if (index === state.word.streak) {
-		return 'bg-neutral-400 animate-pulse';
+		return 'bg-neutral-400';
 	}
 
 	return 'bg-neutral-700';
@@ -99,7 +91,7 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
-			<p className={`text-xl mt-3 tracking-tighter ${statusIndicatorClasses(state)} ${statusIndicatorAnimationClasses(state)}`}>
+			<p className={`text-lg mt-3 tracking-tighter text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
 				{statusIndicator}
 				{lastWPMIndicator}
 			</p>
