@@ -76,7 +76,7 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 	}, [state.lastWPM]);
 
 	return (
-		<div className="text-center w-2/3 translate-y-5">
+		<div className="text-center w-2/3">
 			<p className="relative text-9xl font-bold tracking-wider">
 				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
