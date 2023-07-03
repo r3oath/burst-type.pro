@@ -4,7 +4,6 @@ import {useEffect} from 'react';
 
 type UseKeysProperties = {
 	onType: (key: string) => void;
-	onResetWord: () => void;
 	onJumpBackwards: () => void;
 	onJumpForwards: () => void;
 	onJumpStart: () => void;
@@ -12,7 +11,7 @@ type UseKeysProperties = {
 };
 
 const useKeys = ({
-	onType, onResetWord, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd,
+	onType, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd,
 }: UseKeysProperties): void => {
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent): void => {
@@ -20,10 +19,6 @@ const useKeys = ({
 
 			if (event.key === ' ' || /^[a-z]$/.test(event.key)) {
 				onType(event.key);
-			}
-
-			if (event.key === 'Tab' || event.key === 'Enter') {
-				onResetWord();
 			}
 
 			if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
@@ -48,7 +43,7 @@ const useKeys = ({
 		return () => {
 			window.removeEventListener('keydown', handleKeyPress);
 		};
-	}, [onType, onJumpBackwards, onJumpEnd, onJumpForwards, onJumpStart, onResetWord]);
+	}, [onType, onJumpBackwards, onJumpEnd, onJumpForwards, onJumpStart]);
 };
 
 export default useKeys;

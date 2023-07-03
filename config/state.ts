@@ -29,6 +29,7 @@ type State = {
 	finished: boolean;
 	lastSave?: number;
 	showInstructions: boolean;
+	lastWPM?: number;
 };
 
 const createWord = (raw: string): Word => ({
@@ -73,8 +74,6 @@ type Action = {
 	payload: State;
 } | {
 	type: 'RESET_STATE';
-} | {
-	type: 'RESET_WORD';
 } | {
 	type: 'SAVE_STATE';
 } | {
@@ -146,10 +145,6 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			if (state.buffer.length === state.word.characters.length && action.payload === ' ') {
-				return state;
-			}
-
 			if (state.word.streak >= state.targetStreak) {
 				return state;
 			}
@@ -164,24 +159,54 @@ const reducer = (state: State, action: Action): State => {
 				return {
 					...state,
 					word: {
-						...createWord(wordlist[state.level]),
+						...state.word,
 						endTime: Date.now(),
-						match,
-						wpm,
-						hitTargetWPM,
+						streak: 0,
+						characters: state.word.characters.map((character, index) => ({
+							...character,
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							correct: appendBuffer[index] === undefined
+								? undefined
+								: character.character === appendBuffer[index],
+						})),
+						wpm: 0,
+						match: false,
+						hitTargetWPM: false,
 					},
 					buffer: '',
 				};
 			}
 
 			if (state.word.endTime === undefined && appendBuffer.length >= state.word.characters.length) {
+				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
+
+				if (streak >= state.targetStreak) {
+					// eslint-disable-next-line max-depth
+					if (state.level + 1 === wordlist.length) {
+						return {
+							...state,
+							finished: true,
+							lastSave: Date.now(),
+						};
+					}
+
+					return {
+						...state,
+						level: state.level + 1,
+						highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
+						word: createWord(wordlist[state.level + 1]),
+						buffer: '',
+						lastSave: Date.now(),
+					};
+				}
+
 				return {
 					...state,
 					buffer: '',
 					word: {
 						...state.word,
 						endTime: Date.now(),
-						streak: hitTargetWPM ? state.word.streak + 1 : 0,
+						streak,
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -193,6 +218,7 @@ const reducer = (state: State, action: Action): State => {
 						match,
 						hitTargetWPM,
 					},
+					lastWPM: wpm,
 				};
 			}
 
@@ -259,40 +285,6 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			return state;
-		}
-		case 'RESET_WORD': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.finished) {
-				return state;
-			}
-
-			if (state.word.streak < state.targetStreak) {
-				return {
-					...state,
-					word: createWord(wordlist[state.level]),
-					buffer: '',
-				};
-			}
-
-			if (state.level + 1 === wordlist.length) {
-				return {
-					...state,
-					finished: true,
-					lastSave: Date.now(),
-				};
-			}
-
-			return {
-				...state,
-				level: state.level + 1,
-				highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
-				word: createWord(wordlist[state.level + 1]),
-				buffer: '',
-				lastSave: Date.now(),
-			};
 		}
 		case 'JUMP_FORWARDS': {
 			if (state.showInstructions) {
