@@ -158,7 +158,21 @@ const reducer = (state: State, action: Action): State => {
 			if (!match) {
 				return {
 					...state,
-					word: createWord(wordlist[state.level]),
+					word: {
+						...state.word,
+						endTime: Date.now(),
+						streak: 0,
+						characters: state.word.characters.map((character, index) => ({
+							...character,
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+							correct: appendBuffer[index] === undefined
+								? undefined
+								: character.character === appendBuffer[index],
+						})),
+						wpm: 0,
+						match: false,
+						hitTargetWPM: false,
+					},
 					buffer: '',
 				};
 			}

@@ -69,14 +69,14 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 
 	const lastWPMIndicator = useMemo(() => {
 		if (state.lastWPM === undefined) {
-			return '';
+			return 'Last WPM score: Unknown';
 		}
 
-		return ` — Last WPM: ${state.lastWPM}`;
+		return `Last WPM score: ${state.lastWPM}`;
 	}, [state.lastWPM]);
 
 	return (
-		<div className="text-center w-2/3">
+		<div className="text-center w-2/3 translate-y-5">
 			<p className="relative text-9xl font-bold tracking-wider">
 				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
@@ -91,8 +91,10 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
-			<p className={`text-lg mt-3 tracking-tighter text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
+			<p className={`text-xl mt-6 tracking-tighter text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
 				{statusIndicator}
+			</p>
+			<p className="text-base mt-1 tracking-tighter text-neutral-500">
 				{lastWPMIndicator}
 			</p>
 		</div>
