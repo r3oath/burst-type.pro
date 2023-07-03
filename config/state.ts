@@ -29,6 +29,7 @@ type State = {
 	finished: boolean;
 	lastSave?: number;
 	showInstructions: boolean;
+	lastWPM?: number;
 };
 
 const createWord = (raw: string): Word => ({
@@ -157,13 +158,7 @@ const reducer = (state: State, action: Action): State => {
 			if (!match) {
 				return {
 					...state,
-					word: {
-						...createWord(wordlist[state.level]),
-						endTime: Date.now(),
-						match,
-						wpm,
-						hitTargetWPM,
-					},
+					word: createWord(wordlist[state.level]),
 					buffer: '',
 				};
 			}
@@ -172,6 +167,7 @@ const reducer = (state: State, action: Action): State => {
 				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
 
 				if (streak >= state.targetStreak) {
+					// eslint-disable-next-line max-depth
 					if (state.level + 1 === wordlist.length) {
 						return {
 							...state,
@@ -208,6 +204,7 @@ const reducer = (state: State, action: Action): State => {
 						match,
 						hitTargetWPM,
 					},
+					lastWPM: wpm,
 				};
 			}
 

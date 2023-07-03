@@ -22,7 +22,7 @@ const characterClasses = (state: State, character: Character): string => {
 	return 'text-red-600';
 };
 
-const wpmIndicatorClasses = (state: State): string => {
+const statusIndicatorClasses = (state: State): string => {
 	if (state.word.wpm === undefined) {
 		return 'text-neutral-600';
 	}
@@ -34,7 +34,7 @@ const wpmIndicatorClasses = (state: State): string => {
 	return 'text-red-600';
 };
 
-const wpmIndicatorAnimationClasses = (state: State): string => {
+const statusIndicatorAnimationClasses = (state: State): string => {
 	if (state.word.startTime !== undefined && state.word.wpm === undefined) {
 		return 'italic animate-pulse';
 	}
@@ -51,13 +51,21 @@ const streakIndicatorClasses = (state: State, index: number): string => {
 		return 'bg-green-600';
 	}
 
+	if (index === state.word.streak) {
+		return 'bg-neutral-400 animate-pulse';
+	}
+
 	return 'bg-neutral-700';
 };
 
 const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactElement => {
-	const wpmIndicator = useMemo(() => {
-		if (state.word.wpm !== undefined) {
-			return `${state.word.wpm} WPM`;
+	const statusIndicator = useMemo(() => {
+		if (state.word.endTime !== undefined && state.word.hitTargetWPM) {
+			return 'Success';
+		}
+
+		if (state.word.endTime !== undefined && !state.word.hitTargetWPM) {
+			return 'Failed';
 		}
 
 		if (state.word.startTime !== undefined) {
@@ -65,10 +73,18 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 		}
 
 		return 'Ready';
-	}, [state.word.wpm, state.word.startTime]);
+	}, [state.word.endTime, state.word.hitTargetWPM, state.word.startTime]);
+
+	const lastWPMIndicator = useMemo(() => {
+		if (state.lastWPM === undefined) {
+			return '';
+		}
+
+		return ` — Last WPM: ${state.lastWPM}`;
+	}, [state.lastWPM]);
 
 	return (
-		<div className="text-center">
+		<div className="text-center w-2/3">
 			<p className="relative text-9xl font-bold tracking-wider">
 				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
@@ -77,15 +93,16 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 					</span>
 				))}
 			</p>
-			<p className={`text-3xl mt-6 tracking-tighter ${wpmIndicatorClasses(state)} ${wpmIndicatorAnimationClasses(state)}`}>
-				{wpmIndicator}
-			</p>
-			<div className="flex flex-wrap gap-1 justify-center mt-4 -skew-y-12 rotate-12">
+			<div className="flex flex-wrap gap-1 justify-center mt-6 -skew-y-12 rotate-12">
 				{Array.from({length: targetStreak}).map((_, index) => (
 					// eslint-disable-next-line react/no-array-index-key
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
+			<p className={`text-xl mt-3 tracking-tighter ${statusIndicatorClasses(state)} ${statusIndicatorAnimationClasses(state)}`}>
+				{statusIndicator}
+				{lastWPMIndicator}
+			</p>
 		</div>
 	);
 };
