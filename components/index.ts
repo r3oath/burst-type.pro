@@ -1,4 +1,5 @@
 export {default as Finished} from './finished';
+export {default as Footer} from './footer';
 export {default as Instructions} from './instructions';
 export {default as LevelMap} from './level-map';
 export {default as Loader} from './loader';

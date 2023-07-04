@@ -4,7 +4,7 @@ import {useReducer, useCallback} from 'react';
 import wordlist from '../config/wordlist.json';
 import type {State} from '@app/config/state';
 import {initialState, reducer} from '@app/config/state';
-import {Finished, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
+import {Finished, Footer, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
 import {useKeys, useSaveState} from '@app/hooks';
 
 const Home = (): React.ReactElement => {
@@ -80,6 +80,7 @@ const Home = (): React.ReactElement => {
 				onReset={handleReset}
 			/>
 			<LevelMap state={state} wordlist={wordlist}/>
+			<Footer/>
 			{state.showInstructions && <Instructions onGetStarted={handleToggleInstructions}/>}
 		</main>
 	);
