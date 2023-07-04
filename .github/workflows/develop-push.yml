@@ -5,6 +5,7 @@ on:
     branches: [ develop ]
 
 permissions:
+  checks: write
   contents: write
   pull-requests: write
 
