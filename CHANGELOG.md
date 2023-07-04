@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/r3oath/burst-type.pro/compare/v1.0.0...v1.1.0) (2023-07-04)
+
+
+### Features
+
+* add app footer with links to GitHub, the license, issues, and the current version ([cb29172](https://github.com/r3oath/burst-type.pro/commit/cb291720ec11d508fa5862f2a406636a23fe7a91))
+
 ## 1.0.0 (2023-07-03)
 
 
