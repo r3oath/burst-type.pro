@@ -28,7 +28,7 @@ const LevelMap = ({state, wordlist}: LevelMapProperties): React.ReactElement => 
 	const lastSaved = useLastSaved(state);
 
 	return (
-		<div className="fixed flex justify-center bottom-0 w-full px-10 pb-20">
+		<div className="fixed flex justify-center bottom-0 w-full px-10 mb-24">
 			<div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto">
 				{wordlist.map((word, index) => (
 					<div key={word} className={`w-1 h-1 ${indicatorClasses(index, state)}`}/>
