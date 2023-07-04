@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: [ develop ]
 
+permissions:
+  checks: write
+
 jobs:
   lint:
     name: Check code quality
