@@ -10,10 +10,23 @@ permissions:
 
 jobs:
   lint:
-    name: Create release pull request
+    name: Check code quality and create release
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+      - name: Create release pull request
+        uses: google-github-actions/release-please-action@v3
         with:
           release-type: node
           package-name: release-please-action
