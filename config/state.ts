@@ -30,6 +30,7 @@ type State = {
 	lastSave?: number;
 	showInstructions: boolean;
 	lastWPM?: number;
+	darkMode: boolean;
 };
 
 const createWord = (raw: string): Word => ({
@@ -56,12 +57,13 @@ const initialState: State = {
 	targetStreak: defaultTargetStreak,
 	finished: false,
 	showInstructions: true,
+	darkMode: true,
 };
 
 type Action = {
 	type: 'APPEND_BUFFER';
 	payload: string;
-} |{
+} | {
 	type: 'JUMP_BACKWARDS';
 } | {
 	type: 'JUMP_END';
@@ -88,6 +90,8 @@ type Action = {
 } | {
 	type: 'SET_WORD';
 	payload: Word;
+} | {
+	type: 'TOGGLE_DARK_MODE';
 } | {
 	type: 'TOGGLE_INSTRUCTIONS';
 };
@@ -369,6 +373,13 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				showInstructions: !state.showInstructions,
+			};
+		}
+		case 'TOGGLE_DARK_MODE': {
+			return {
+				...state,
+				darkMode: !state.darkMode,
+				lastSave: Date.now(),
 			};
 		}
 		default: {

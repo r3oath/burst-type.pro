@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 const RootLayout = ({children}: {children: React.ReactNode}): React.ReactElement => {
 	return (
 		<html lang="en">
-			<body className={fira.className}>
+			<body className={`antialiased ${fira.className}`}>
 				{children}
 				<Analytics/>
 			</body>

@@ -8,22 +8,22 @@ type WordProperties = {
 
 const characterClasses = (state: State, character: Character): string => {
 	if (state.word.streak === state.targetStreak) {
-		return 'text-green-500';
+		return 'text-green-500 dark:text-green-500';
 	}
 
 	if (state.word.wpm !== undefined && state.word.hitTargetWPM) {
-		return 'text-green-500';
+		return 'text-green-600 dark:text-green-500';
 	}
 
 	if (state.word.wpm !== undefined && !state.word.hitTargetWPM) {
-		return 'text-red-600';
+		return 'text-red-600 dark:text-red-600';
 	}
 
 	if (character.correct === undefined) {
-		return 'text-neutral-600';
+		return 'text-neutral-400 dark:text-neutral-600';
 	}
 
-	return 'text-neutral-50';
+	return 'text-neutral-950 dark:text-neutral-50';
 };
 
 const statusIndicatorAnimationClasses = (state: State): string => {
@@ -36,18 +36,18 @@ const statusIndicatorAnimationClasses = (state: State): string => {
 
 const streakIndicatorClasses = (state: State, index: number): string => {
 	if (state.word.wpm !== undefined && (!state.word.match || !state.word.hitTargetWPM)) {
-		return 'bg-red-600';
+		return 'bg-red-600 dark:bg-red-600';
 	}
 
 	if (index < state.word.streak) {
-		return 'bg-green-600';
+		return 'bg-green-600 dark:bg-green-600';
 	}
 
 	if (index === state.word.streak) {
-		return 'bg-neutral-400';
+		return 'bg-neutral-400 dark:bg-neutral-400';
 	}
 
-	return 'bg-neutral-700';
+	return 'bg-neutral-300 dark:bg-neutral-700';
 };
 
 const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactElement => {
@@ -91,10 +91,10 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
-			<p className={`text-xl mt-6 tracking-tighter text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
+			<p className={`text-xl mt-6 tracking-tighter text-neutral-600 dark:text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
 				{statusIndicator}
 			</p>
-			<p className="text-base mt-1 tracking-tighter text-neutral-500">
+			<p className="text-base mt-1 tracking-tighter text-neutral-400 dark:text-neutral-500">
 				{lastWPMIndicator}
 			</p>
 		</div>
