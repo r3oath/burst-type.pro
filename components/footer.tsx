@@ -37,7 +37,7 @@ const links: Link[] = [
 		),
 	},
 	{
-		href: 'https://github.com/r3oath/burst-type.pro/tags',
+		href: 'https://github.com/r3oath/burst-type.pro/blob/main/CHANGELOG.md',
 		label: `Version ${packageJSON.version}`,
 		icon: (className: string) => (
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
