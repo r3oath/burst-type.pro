@@ -121,7 +121,7 @@ const Menu = ({
 					<MenuButton label="Save" value="S" theme="green" onClick={handleSave}/>
 					<MenuButton label="Reset" value="R" theme="red" onClick={handleReset}/>
 					<div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-300 dark:border-neutral-800 rounded-b-md text-center">
-						<span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-100 dark:bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm text-neutral-400 dark:text-neutral-600 transition-colors">options</span>
+						<span className="absolute bottom-0 left-[50%] -translate-x-[50%] bg-neutral-50 dark:bg-neutral-900 -mb-3 px-3 font-bold uppercase text-sm text-neutral-400 dark:text-neutral-600 transition-colors">options</span>
 					</div>
 				</div>
 				{!['www.burst-type.pro', 'localhost'].includes(window.location.hostname) && (

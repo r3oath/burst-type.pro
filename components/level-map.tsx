@@ -34,14 +34,14 @@ const LevelMap = ({state, wordlist}: LevelMapProperties): React.ReactElement => 
 					<div key={word} className={`w-1 h-1 ${indicatorClasses(index, state)}`}/>
 				))}
 				<div className="absolute h-4 bottom-0 -mb-8 w-full border-l-2 border-b-2 border-r-2 border-neutral-300 dark:border-neutral-800 rounded-b-md text-center">
-					<span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-100 dark:bg-neutral-900 -mb-5 px-3 text-neutral-400 dark:text-neutral-600 text-xs font-bold uppercase transition-colors">
+					<span className="flex items-center gap-2 absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-50 dark:bg-neutral-900 -mb-5 px-3 text-neutral-400 dark:text-neutral-600 text-xs font-bold uppercase transition-colors">
 						<span className="mt-1.5">
 							{`Last saved ${lastSaved}`}
 						</span>
 					</span>
 				</div>
 				<div className="absolute h-4 top-0 -mt-8 w-full border-l-2 border-t-2 border-r-2 border-neutral-300 dark:border-neutral-800 rounded-t-md text-center">
-					<span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-100 dark:bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm text-neutral-500 dark:text-neutral-500 transition-colors">
+					<span className="absolute top-0 left-[50%] -translate-x-[50%] bg-neutral-50 dark:bg-neutral-900 -mt-2.5 px-3 font-bold uppercase text-sm text-neutral-500 dark:text-neutral-500 transition-colors">
 						{`Words discovered (${(state.highestLevel ?? 0) + 1}/${wordlist.length})`}
 					</span>
 				</div>
