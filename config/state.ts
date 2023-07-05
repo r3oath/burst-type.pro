@@ -152,7 +152,8 @@ const reducer = (state: State, action: Action): State => {
 			const appendBuffer = state.buffer + action.payload;
 			// eslint-disable-next-line unicorn/prefer-spread
 			const match = appendBuffer.split('').every((character, index) => character === state.word.characters[index].character);
-			const wpm = Math.round(60 / ((Date.now() - (state.word.startTime ?? 0)) / 1000));
+			const timeElapsed = (Date.now() - (state.word.startTime ?? 0)) / 60_000;
+			const wpm = Math.round(appendBuffer.length / 5 / timeElapsed);
 			const hitTargetWPM = wpm >= state.targetWPM;
 
 			if (!match) {
