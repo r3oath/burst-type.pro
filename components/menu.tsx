@@ -126,7 +126,7 @@ const Menu = ({
 				</div>
 				{!['www.burst-type.pro', 'localhost'].includes(window.location.hostname) && (
 					<div className="absolute h-4 bottom-0 -mb-16 w-full text-center">
-						<span className="text-sm text-neutral-950 dark:text-yellow-400 bg-yellow-500 dark:bg-transparent px-4 py-2 border border-yellow-700 dark:border-yellow-400 rounded-md">
+						<span className="text-sm text-neutral-950 dark:text-yellow-400 bg-yellow-200 dark:bg-transparent px-4 py-2 border border-yellow-400 dark:border-yellow-400 rounded-md">
 							<span>You are on an experimental build, view the latest stable version at</span>
 							{' '}
 							<a className="underline" href="https://www.burst-type.pro">burst-type.pro</a>
