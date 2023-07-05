@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/r3oath/burst-type.pro/compare/v1.1.0...v1.1.1) (2023-07-05)
+
+
+### Bug Fixes
+
+* fix the WPM calculation logic ([3db8326](https://github.com/r3oath/burst-type.pro/commit/3db8326463e023acacf70d022967b207d0b4293c))
+
 ## [1.1.0](https://github.com/r3oath/burst-type.pro/compare/v1.0.0...v1.1.0) (2023-07-04)
 
 
