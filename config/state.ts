@@ -44,7 +44,7 @@ const defaultLevel = 0;
 const defaultTargetWPM = 90;
 const defaultTargetStreak = 5;
 
-const wpmOptions = [30, 60, 90, 120, 200, 500, 1000];
+const wpmOptions = [30, 60, 90, 120, 200];
 const streakOptions = [1, 3, 5, 10, 25];
 
 const initialState: State = {
