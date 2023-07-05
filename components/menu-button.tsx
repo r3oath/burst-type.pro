@@ -44,3 +44,7 @@ const MenuButton = ({label, value, onClick: handleOnClick, enabled = false, them
 );
 
 export default MenuButton;
+
+export type {
+	Theme,
+};

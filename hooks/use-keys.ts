@@ -15,8 +15,6 @@ const useKeys = ({
 }: UseKeysProperties): void => {
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent): void => {
-			event.preventDefault();
-
 			if (event.key === ' ' || /^[a-z]$/.test(event.key)) {
 				onType(event.key);
 			}
