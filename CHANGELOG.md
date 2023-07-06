@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/r3oath/burst-type.pro/compare/v1.1.1...v1.2.0) (2023-07-06)
+
+
+### Features
+
+* add basic light and dark mode themes ([038c425](https://github.com/r3oath/burst-type.pro/commit/038c42529a68403e1b177986d0c24ed56164178d))
+* add the ability to set custom WPM and streak values ([b21ccb1](https://github.com/r3oath/burst-type.pro/commit/b21ccb11a72d298d0331ddff82534f30c980206a))
+
 ## [1.1.1](https://github.com/r3oath/burst-type.pro/compare/v1.1.0...v1.1.1) (2023-07-05)
 
 
