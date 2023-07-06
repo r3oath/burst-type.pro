@@ -14,6 +14,7 @@ type MenuProperties = {
 };
 
 type SubMenuProperties = {
+	title: string;
 	onClose: () => void;
 	presetValues: number[];
 	onTargetChange: (value: number) => () => void;
@@ -26,7 +27,7 @@ type SubMenuProperties = {
 type MenuState = 'closed' | 'streak' | 'wpm';
 
 const SubMenu = ({
-	onClose: handleOnClose, presetValues, onTargetChange: handleTargetChange, currentValue, maxValue, label, theme,
+	title, onClose: handleOnClose, presetValues, onTargetChange: handleTargetChange, currentValue, maxValue, label, theme,
 }: SubMenuProperties): React.ReactElement => {
 	const handleManualTargetChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
 		const value = Number.parseInt(event.target.value, 10);
@@ -41,8 +42,9 @@ const SubMenu = ({
 	return (
 		<div className="fixed flex items-center justify-center inset-0 w-full h-full bg-neutral-100 dark:bg-neutral-900 bg-opacity-80 backdrop-blur-md z-50">
 			<div className="mx-auto w-full max-w-sm">
-				<div className="flex flex-col">
-					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Quick Presets</p>
+				<h2 className="text-neutral-900 dark:text-neutral-100 uppercase text-4xl font-bold">{title}</h2>
+				<div className="mt-6 flex flex-col">
+					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Presets</p>
 					<div className="mt-4 flex flex-wrap items-center gap-4">
 						{presetValues.map((value) => (
 							<MenuButton
@@ -56,7 +58,7 @@ const SubMenu = ({
 						))}
 					</div>
 				</div>
-				<div className="mt-12 flex flex-col">
+				<div className="mt-8 flex flex-col">
 					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">{`Custom value (1-${maxValue})`}</p>
 					<input
 						className="mt-4 w-full px-4 py-4 text-neutral-900 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-900 border-2 border-neutral-400 dark:border-neutral-700 rounded-md"
@@ -91,6 +93,7 @@ const Menu = ({
 
 	const subMenus: Record<Exclude<MenuState, 'closed'>, SubMenuProperties> = useMemo(() => ({
 		wpm: {
+			title: 'WPM',
 			onClose: handleMenuStateChange('closed'),
 			presetValues: wpmOptions,
 			onTargetChange: handleTargetWPMChange,
@@ -100,6 +103,7 @@ const Menu = ({
 			theme: 'green',
 		},
 		streak: {
+			title: 'Streak',
 			onClose: handleMenuStateChange('closed'),
 			presetValues: streakOptions,
 			onTargetChange: handleTargetStreakChange,
