@@ -52,7 +52,7 @@ const Footer = (): React.ReactElement => {
 	return (
 		<div className="fixed flex gap-4 justify-center bottom-0 w-full px-10 mb-5">
 			{links.map(({href, label, icon}) => (
-				<a key={href} className="flex gap-1 items-center text-sm text-neutral-600 hover:text-neutral-200 tracking-tighter" href={href}>
+				<a key={href} className="flex gap-1 items-center text-sm text-neutral-400 dark:text-neutral-600 hover:text-neutral-800 dark:hover:text-neutral-200 tracking-tighter" href={href}>
 					{icon('w-4 h-4')}
 					<span>{label}</span>
 				</a>

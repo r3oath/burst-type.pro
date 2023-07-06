@@ -64,24 +64,31 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'TOGGLE_INSTRUCTIONS'});
 	}, []);
 
+	const handleToggleDarkMode = useCallback((): void => {
+		dispatch({type: 'TOGGLE_DARK_MODE'});
+	}, []);
+
 	if (!loadedState) {
 		return <Loader/>;
 	}
 
 	return (
-		<main className="flex items-center justify-center w-full h-screen bg-neutral-900 text-neutral-600">
-			{state.finished && <Finished/>}
-			{!state.finished && <WordVisualiser state={state} targetStreak={state.targetStreak}/>}
-			<Menu
-				state={state}
-				onTargetWPMChange={handleTargetWPMChange}
-				onTargetStreakChange={handleTargetStreakChange}
-				onSave={handleSave}
-				onReset={handleReset}
-			/>
-			<LevelMap state={state} wordlist={wordlist}/>
-			<Footer/>
-			{state.showInstructions && <Instructions onGetStarted={handleToggleInstructions}/>}
+		<main className={`${state.darkMode ? 'dark' : ''}`}>
+			<div className="flex items-center justify-center w-full h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors">
+				{state.finished && <Finished/>}
+				{!state.finished && <WordVisualiser state={state} targetStreak={state.targetStreak}/>}
+				<Menu
+					state={state}
+					onTargetWPMChange={handleTargetWPMChange}
+					onTargetStreakChange={handleTargetStreakChange}
+					onToggleDarkMode={handleToggleDarkMode}
+					onSave={handleSave}
+					onReset={handleReset}
+				/>
+				<LevelMap state={state} wordlist={wordlist}/>
+				<Footer/>
+				{state.showInstructions && <Instructions onGetStarted={handleToggleInstructions}/>}
+			</div>
 		</main>
 	);
 };
