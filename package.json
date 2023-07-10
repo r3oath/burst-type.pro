@@ -26,7 +26,7 @@
 		"eslint-plugin-react": "^7.32.2",
 		"eslint-plugin-unicorn": "^47.0.0",
 		"javascript-time-ago": "^2.5.9",
-		"next": "13.4.7",
+		"next": "13.4.9",
 		"postcss": "8.4.24",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
