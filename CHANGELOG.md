@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/r3oath/burst-type.pro/compare/v1.2.0...v1.3.0) (2023-07-11)
+
+
+### Features
+
+* improve the word visualiser error state labels, colours, and streak bar ([289b4fd](https://github.com/r3oath/burst-type.pro/commit/289b4fd1a7c850074ea7fe406eb102c51fbc85f6))
+
 ## [1.2.0](https://github.com/r3oath/burst-type.pro/compare/v1.1.1...v1.2.0) (2023-07-06)
 
 
