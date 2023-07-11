@@ -8,15 +8,19 @@ type WordProperties = {
 
 const characterClasses = (state: State, character: Character): string => {
 	if (state.word.streak === state.targetStreak) {
-		return 'text-green-500 dark:text-green-500';
+		return 'text-green-600 dark:text-green-500';
 	}
 
 	if (state.word.wpm !== undefined && state.word.hitTargetWPM) {
 		return 'text-green-600 dark:text-green-500';
 	}
 
+	if (state.word.wpm !== undefined && !state.word.match) {
+		return 'text-red-600 dark:text-red-700';
+	}
+
 	if (state.word.wpm !== undefined && !state.word.hitTargetWPM) {
-		return 'text-red-600 dark:text-red-600';
+		return 'text-sky-700 dark:text-sky-800';
 	}
 
 	if (character.correct === undefined) {
@@ -35,10 +39,6 @@ const statusIndicatorAnimationClasses = (state: State): string => {
 };
 
 const streakIndicatorClasses = (state: State, index: number): string => {
-	if (state.word.wpm !== undefined && (!state.word.match || !state.word.hitTargetWPM)) {
-		return 'bg-red-600 dark:bg-red-600';
-	}
-
 	if (index < state.word.streak) {
 		return 'bg-green-600 dark:bg-green-600';
 	}
@@ -56,8 +56,12 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 			return 'Success';
 		}
 
+		if (state.word.endTime !== undefined && !state.word.match) {
+			return 'Typo';
+		}
+
 		if (state.word.endTime !== undefined && !state.word.hitTargetWPM) {
-			return 'Failed';
+			return 'Slow';
 		}
 
 		if (state.word.startTime !== undefined) {
@@ -65,7 +69,7 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 		}
 
 		return 'Ready';
-	}, [state.word.endTime, state.word.hitTargetWPM, state.word.startTime]);
+	}, [state.word.endTime, state.word.hitTargetWPM, state.word.match, state.word.startTime]);
 
 	const lastWPMIndicator = useMemo(() => {
 		if (state.lastWPM === undefined) {
@@ -91,10 +95,10 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}
 			</div>
-			<p className={`text-xl mt-6 tracking-tighter text-neutral-600 dark:text-neutral-400 ${statusIndicatorAnimationClasses(state)}`}>
+			<p className={`text-xl mt-6 text-neutral-600 dark:text-neutral-400 font-semibold ${statusIndicatorAnimationClasses(state)}`}>
 				{statusIndicator}
 			</p>
-			<p className="text-base mt-1 tracking-tighter text-neutral-400 dark:text-neutral-500">
+			<p className="text-base mt-1 tracking-tighter text-neutral-600 dark:text-neutral-400">
 				{lastWPMIndicator}
 			</p>
 		</div>
