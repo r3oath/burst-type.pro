@@ -149,7 +149,7 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 				</div>
 				<div className="mt-4 flex flex-col">
 					{isSaveEnabled && (
-						<span className="text-yellow-500 font-bold text-center">Warning: changing wordlists will reset your progress.</span>
+						<span className="text-yellow-700 dark:text-yellow-500 font-bold text-center">Warning: changing wordlists will reset your progress.</span>
 					)}
 					<button
 						className="mt-2 w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 bg-neutral-300 dark:bg-neutral-800 enabled:hover:bg-neutral-200 dark:enabled:hover:bg-neutral-700 border-2 border-neutral-400 dark:border-neutral-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
