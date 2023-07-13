@@ -29,7 +29,7 @@ const LevelMap = ({state, wordlist}: LevelMapProperties): React.ReactElement => 
 
 	return (
 		<div className="fixed flex justify-center bottom-0 w-full px-10 mb-24">
-			<div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto">
+			<div className="relative inline-flex flex-wrap gap-0.5 max-w-[750px] justify-center mx-auto min-w-[500px]">
 				{wordlist.map((word, index) => (
 					<div key={word} className={`w-1 h-1 ${indicatorClasses(index, state)}`}/>
 				))}

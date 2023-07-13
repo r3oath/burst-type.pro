@@ -1,7 +1,7 @@
 'use client';
 
 import {useReducer, useCallback} from 'react';
-import wordlist from '../config/wordlist.json';
+import en1000 from '../wordlists/en1000.json';
 import type {State} from '@app/config/state';
 import {initialState, reducer} from '@app/config/state';
 import {Finished, Footer, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
@@ -46,6 +46,10 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'SET_TARGET_STREAK', payload: streak});
 	}, []);
 
+	const handleWordlistChange = useCallback((wordlist: string[]): void => {
+		dispatch({type: 'SET_WORDLIST', payload: wordlist});
+	}, []);
+
 	const handleReset = useCallback((): void => {
 		if (!confirm('Are you sure you want to reset your progress?')) {
 			return;
@@ -82,10 +86,11 @@ const Home = (): React.ReactElement => {
 					onTargetWPMChange={handleTargetWPMChange}
 					onTargetStreakChange={handleTargetStreakChange}
 					onToggleDarkMode={handleToggleDarkMode}
+					onWordlistChange={handleWordlistChange}
 					onSave={handleSave}
 					onReset={handleReset}
 				/>
-				<LevelMap state={state} wordlist={wordlist}/>
+				<LevelMap state={state} wordlist={state.customWordlist ?? en1000}/>
 				<Footer/>
 				{state.showInstructions && <Instructions onGetStarted={handleToggleInstructions}/>}
 			</div>
