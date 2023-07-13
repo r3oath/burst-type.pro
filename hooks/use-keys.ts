@@ -34,6 +34,11 @@ const useKeys = ({
 			if (event.key === 'End') {
 				onJumpEnd();
 			}
+
+			if (event.key === 'Tab' || event.key === 'Enter') {
+				event.preventDefault();
+				onType(' ');
+			}
 		};
 
 		window.addEventListener('keydown', handleKeyPress);
