@@ -4,7 +4,7 @@ import {streakOptions, wpmOptions} from '@app/config/state';
 import type {Theme} from '@app/components/menu-button';
 import MenuButton from '@app/components/menu-button';
 import en1000 from '../wordlists/en1000.json';
-import en200 from '../wordlists/en200.json';
+import endbl from '../wordlists/endbl.json';
 import rickroll from '../wordlists/rickroll.json';
 
 type MenuProperties = {
@@ -42,8 +42,8 @@ type WordlistPreset = {
 };
 
 const wordlistPresets: WordlistPreset[] = [
-	{name: 'E200', wordlist: en200.join(' ')},
-	{name: 'E1K', wordlist: en1000.join(' ')},
+	{name: 'F1K', wordlist: en1000.join(' ')},
+	{name: 'DBL', wordlist: endbl.join(' ')},
 	{name: 'Roll', wordlist: rickroll.join(' ')},
 ];
 
@@ -103,12 +103,14 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 	const [isSaveEnabled, setIsSaveEnabled] = useState(false);
 
 	const handleWordlistChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
+		const isValidList = event.target.value.trim().split(/[ ,]+/).every((word) => word.length > 0 && /^[a-z]+$/.test(word));
+
 		setWordlistValue(event.target.value);
-		setIsSaveEnabled(event.target.value.length > 0 && /^[ ,A-Za-z]+$/.test(event.target.value));
+		setIsSaveEnabled(isValidList);
 	};
 
 	const handleWordlistSave = (): void => {
-		onWordlistChange(wordlistValue.split(/[ ,]+/).filter((word) => word.length > 0));
+		onWordlistChange(wordlistValue.trim().split(/[ ,]+/));
 		handleOnClose();
 	};
 
