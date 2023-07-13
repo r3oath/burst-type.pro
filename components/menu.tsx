@@ -162,7 +162,7 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 					<button
 						className="mt-2 w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 underline underline-offset-4"
 						type="button"
-						onClick={handleWordlistSave}
+						onClick={handleOnClose}
 					>
 						Cancel
 					</button>
