@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/r3oath/burst-type.pro/compare/v1.3.0...v1.4.0) (2023-07-14)
+
+
+### Features
+
+* add the ability to configure custom wordlists or select a preset ([9593cb3](https://github.com/r3oath/burst-type.pro/commit/9593cb34039b5470128ff25b7d9358c7301d88e4))
+
 ## [1.3.0](https://github.com/r3oath/burst-type.pro/compare/v1.2.0...v1.3.0) (2023-07-11)
 
 
