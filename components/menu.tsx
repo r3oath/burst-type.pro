@@ -110,7 +110,9 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 	};
 
 	const handleWordlistSave = (): void => {
-		onWordlistChange(wordlistValue.trim().split(/[ ,]+/));
+		const wordlist = new Set(wordlistValue.trim().split(/[ ,]+/));
+		// eslint-disable-next-line unicorn/prefer-spread
+		onWordlistChange(Array.from(wordlist));
 		handleOnClose();
 	};
 
