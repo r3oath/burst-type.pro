@@ -1,4 +1,4 @@
-import wordlist from '../config/wordlist.json';
+import en1000 from '../wordlists/en1000.json';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -31,11 +31,12 @@ type State = {
 	showInstructions: boolean;
 	lastWPM?: number;
 	darkMode: boolean;
+	customWordlist?: string[];
 };
 
-const createWord = (raw: string): Word => ({
+const createWord = (list: string[], index: number): Word => ({
 	// eslint-disable-next-line unicorn/prefer-spread
-	characters: `${raw} `.toLowerCase().split('').map(character => ({character})),
+	characters: `${list[index]} `.toLowerCase().split('').map(character => ({character})),
 	match: false,
 	hitTargetWPM: false,
 	streak: 0,
@@ -49,7 +50,7 @@ const wpmOptions = [30, 60, 90, 120, 200];
 const streakOptions = [1, 3, 5, 10, 25];
 
 const initialState: State = {
-	word: createWord(wordlist[defaultLevel]),
+	word: createWord(en1000, defaultLevel),
 	level: defaultLevel,
 	highestLevel: defaultLevel,
 	buffer: '',
@@ -90,6 +91,9 @@ type Action = {
 } | {
 	type: 'SET_WORD';
 	payload: Word;
+} | {
+	type: 'SET_WORDLIST';
+	payload: string[];
 } | {
 	type: 'TOGGLE_DARK_MODE';
 } | {
@@ -134,6 +138,20 @@ const reducer = (state: State, action: Action): State => {
 					...state.word,
 					characters: action.payload,
 				},
+			};
+		}
+		case 'SET_WORDLIST': {
+			return {
+				...initialState,
+				level: 0,
+				highestLevel: 0,
+				word: createWord(action.payload, 0),
+				targetWPM: state.targetWPM,
+				targetStreak: state.targetStreak,
+				darkMode: state.darkMode,
+				customWordlist: action.payload,
+				lastSave: Date.now(),
+				showInstructions: false,
 			};
 		}
 		case 'APPEND_BUFFER': {
@@ -187,7 +205,7 @@ const reducer = (state: State, action: Action): State => {
 
 				if (streak >= state.targetStreak) {
 					// eslint-disable-next-line max-depth
-					if (state.level + 1 === wordlist.length) {
+					if (state.level + 1 === (state.customWordlist ?? en1000).length) {
 						return {
 							...state,
 							finished: true,
@@ -199,7 +217,7 @@ const reducer = (state: State, action: Action): State => {
 						...state,
 						level: state.level + 1,
 						highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
-						word: createWord(wordlist[state.level + 1]),
+						word: createWord(state.customWordlist ?? en1000, state.level + 1),
 						buffer: '',
 						lastSave: Date.now(),
 					};
@@ -250,7 +268,7 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			const nextBuffer = action.payload;
-			const repeatWord = createWord(wordlist[state.level]);
+			const repeatWord = createWord(state.customWordlist ?? en1000, state.level);
 
 			if (!state.word.match || state.word.wpm < state.targetWPM) {
 				return {
@@ -305,7 +323,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				level: nextLevel,
-				word: createWord(wordlist[nextLevel]),
+				word: createWord(state.customWordlist ?? en1000, nextLevel),
 				buffer: '',
 				finished: false,
 				lastSave: Date.now(),
@@ -325,7 +343,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				level: previousLevel,
-				word: createWord(wordlist[previousLevel]),
+				word: createWord(state.customWordlist ?? en1000, previousLevel),
 				buffer: '',
 				finished: false,
 				lastSave: Date.now(),
@@ -339,7 +357,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				level: 0,
-				word: createWord(wordlist[0]),
+				word: createWord(state.customWordlist ?? en1000, 0),
 				buffer: '',
 				finished: false,
 				lastSave: Date.now(),
@@ -357,7 +375,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				level: state.highestLevel,
-				word: createWord(wordlist[state.highestLevel]),
+				word: createWord(state.customWordlist ?? en1000, state.highestLevel),
 				buffer: '',
 				finished: false,
 				lastSave: Date.now(),

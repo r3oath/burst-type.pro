@@ -4,7 +4,7 @@ import {useEffect} from 'react';
 import {useSearchParams, useRouter} from 'next/navigation';
 import type {Optional, State} from '@app/config/state';
 import {createWord, initialState} from '@app/config/state';
-import wordlist from '../../config/wordlist.json';
+import en1000 from '../../wordlists/en1000.json';
 
 const Migrate = (): React.ReactElement => {
 	const parameters = useSearchParams();
@@ -26,7 +26,7 @@ const Migrate = (): React.ReactElement => {
 			const state = {
 				...initialState,
 				...data,
-				word: createWord(wordlist[data.level ?? 0]),
+				word: createWord(en1000, data.level ?? 0),
 			};
 
 			localStorage.setItem('state', JSON.stringify(state));
