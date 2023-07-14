@@ -139,7 +139,7 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 					</div>
 				</div>
 				<div className="mt-8 flex flex-col">
-					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Wordlist (space or comma separated)</p>
+					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Custom Wordlist (a-z, space or comma separated)</p>
 					<textarea
 						className="mt-4 w-full px-4 py-4 text-neutral-900 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-900 border-2 border-neutral-400 dark:border-neutral-700 rounded-md resize-none"
 						value={wordlistValue}
