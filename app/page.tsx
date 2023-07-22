@@ -69,23 +69,23 @@ const Home = (): React.ReactElement => {
 	}, []);
 
 	const handleToggleDarkMode = useCallback((): void => {
-		dispatch({ type: 'TOGGLE_DARK_MODE' });
+		dispatch({type: 'TOGGLE_DARK_MODE'});
 	}, []);
 
 	const handleToggleMuted = useCallback((): void => {
-		dispatch({ type: 'TOGGLE_MUTED' });
+		dispatch({type: 'TOGGLE_MUTED'});
 	}, []);
 
 	if (!loadedState) {
-		return <Loader />;
+		return <Loader/>;
 	}
 
 	return (
 		<main className={`${state.darkMode ? 'dark' : ''}`}>
-			<div className='flex items-center justify-center w-full h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors'>
-				{state.finished && <Finished />}
+			<div className="flex items-center justify-center w-full h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors">
+				{state.finished && <Finished/>}
 				{!state.finished && (
-					<WordVisualiser state={state} targetStreak={state.targetStreak} />
+					<WordVisualiser state={state} targetStreak={state.targetStreak}/>
 				)}
 				<Menu
 					state={state}
@@ -97,10 +97,10 @@ const Home = (): React.ReactElement => {
 					onReset={handleReset}
 					onToggleMuted={handleToggleMuted}
 				/>
-				<LevelMap state={state} wordlist={state.customWordlist ?? en1000} />
-				<Footer />
+				<LevelMap state={state} wordlist={state.customWordlist ?? en1000}/>
+				<Footer/>
 				{state.showInstructions && (
-					<Instructions onGetStarted={handleToggleInstructions} />
+					<Instructions onGetStarted={handleToggleInstructions}/>
 				)}
 			</div>
 		</main>

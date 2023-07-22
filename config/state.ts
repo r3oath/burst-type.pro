@@ -1,4 +1,4 @@
-import en1000 from "../wordlists/en1000.json";
+import en1000 from '../wordlists/en1000.json';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -32,18 +32,23 @@ type State = {
 	lastWPM?: number;
 	darkMode: boolean;
 	customWordlist?: string[];
-	muted?: boolean;
+	muted: boolean;
 	successSounds: string[];
 	errorSounds: string[];
 	speedErrorSounds: string[];
 	clickSounds: string[];
 };
 
-let SOUNDS: Record<string, AudioBuffer> = {};
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions, , @typescript-eslint/no-unsafe-assignment
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	
+const SOUNDS: Record<string, AudioBuffer> = {};
 
-var audioContext = new AudioContext();
+const audioContext = new AudioContext();
 
-async function loadSound(name: string) {
+async function loadSound(name: string): Promise<AudioBuffer> {
 	const response = await fetch(`audio/${name}.wav`);
 	const arrayBuffer = await response.arrayBuffer();
 	const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
@@ -79,10 +84,10 @@ const initialState: State = {
 	showInstructions: true,
 	darkMode: true,
 	muted: true,
-	successSounds: ["success"],
-	errorSounds: ["error"],
-	speedErrorSounds: ["speed-error"],
-	clickSounds: ["click"],
+	successSounds: ['success'],
+	errorSounds: ['error'],
+	speedErrorSounds: ['speed-error'],
+	clickSounds: ['click'],
 };
 
 type Action = {
@@ -127,23 +132,26 @@ type Action = {
 };
 
 const reducer = (state: State, action: Action): State => {
-	function playSound(name: string, param = { detune: 100 }) {
+	// eslint-disable-next-line unicorn/no-object-as-default-parameter
+	function playSound(name: string, parameters = {detune: 100}): void {
 		if (state.muted) {
 			return;
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions
 		if (!SOUNDS[name]) {
 			loadSound(name).then(() => {
-				playSound(name, param);
+				playSound(name, parameters);
 			});
+			
 			return;
 		}
 
-		var sound = SOUNDS[name];
-		var source = audioContext.createBufferSource();
+		const sound = SOUNDS[name];
+		const source = audioContext.createBufferSource();
 		source.buffer = sound;
 
-		source.detune.value = param.detune;
+		source.detune.value = parameters.detune;
 
 		source.connect(audioContext.destination);
 		source.start(0);
@@ -229,7 +237,7 @@ const reducer = (state: State, action: Action): State => {
 			if (!match) {
 				// Play sound if the previous character was correct or if the was empty
 				if (
-					!state.word.characters[appendBuffer.length - 1]?.correct === true &&
+					state.word.characters[appendBuffer.length - 1]?.correct === false &&
 					appendBuffer.length > 1 &&
 					state.word.characters[appendBuffer.length - 2]?.correct === true
 				) {
@@ -265,7 +273,7 @@ const reducer = (state: State, action: Action): State => {
 				if (hitTargetWPM) {
 					// increase pitch the closer to target streak we are
 					const detune = 100 + 100 * (1 - state.targetStreak / streak);
-					playSound(state.successSounds[0], { detune });
+					playSound(state.successSounds[0], {detune});
 				} else {
 					playSound(state.speedErrorSounds[0]);
 				}
@@ -467,7 +475,7 @@ const reducer = (state: State, action: Action): State => {
 				lastSave: Date.now(),
 			};
 		}
-		case "TOGGLE_MUTED": {
+		case 'TOGGLE_MUTED': {
 			return {
 				...state,
 				muted: !state.muted,

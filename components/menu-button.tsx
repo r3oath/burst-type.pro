@@ -39,7 +39,7 @@ const MenuButton = ({label, icon, value, onClick: handleOnClick, enabled = false
 		className={`${sharedClasses} ${enabled ? themeClasses[theme].enabled : themeClasses[theme].base}`}
 		onClick={handleOnClick}
 	>
-		<span className="font-bold text-lg">{icon ? icon("w-5 h-5 mt-1") : value}</span>
+		<span className="font-bold text-lg">{icon ? icon('w-5 h-5 mt-1') : value}</span>
 		<span className="text-xs uppercase opacity-80 dark:opacity-60">{label}</span>
 	</button>
 );
