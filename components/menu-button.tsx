@@ -10,12 +10,13 @@ type ThemeConfig = {
 type MenuButtonProperties = {
 	label: string;
 	value: number | string;
+	icon?: (className: string) => JSX.Element;
 	onClick: () => void;
 	enabled?: boolean;
 	theme?: 'blue' | 'green' | 'red';
 };
 
-const sharedClasses = 'relative flex flex-col items-center w-16 py-3 border-2 rounded-md';
+const sharedClasses = 'relative flex flex-col items-center w-16 py-3 border-2 rounded-md justify-between';
 
 const themeClasses: Record<Theme, ThemeConfig> = {
 	blue: {
@@ -32,13 +33,13 @@ const themeClasses: Record<Theme, ThemeConfig> = {
 	},
 };
 
-const MenuButton = ({label, value, onClick: handleOnClick, enabled = false, theme = 'green'}: MenuButtonProperties): React.ReactElement => (
+const MenuButton = ({label, icon, value, onClick: handleOnClick, enabled = false, theme = 'green'}: MenuButtonProperties): React.ReactElement => (
 	<button
 		type="button"
 		className={`${sharedClasses} ${enabled ? themeClasses[theme].enabled : themeClasses[theme].base}`}
 		onClick={handleOnClick}
 	>
-		<span className="font-bold text-lg">{value}</span>
+		<span className="font-bold text-lg">{icon ? icon("w-5 h-5 mt-1") : value}</span>
 		<span className="text-xs uppercase opacity-80 dark:opacity-60">{label}</span>
 	</button>
 );

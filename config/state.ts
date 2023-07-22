@@ -1,4 +1,4 @@
-import en1000 from '../wordlists/en1000.json';
+import en1000 from "../wordlists/en1000.json";
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -32,7 +32,26 @@ type State = {
 	lastWPM?: number;
 	darkMode: boolean;
 	customWordlist?: string[];
+	muted?: boolean;
+	successSounds: string[];
+	errorSounds: string[];
+	speedErrorSounds: string[];
+	clickSounds: string[];
 };
+
+let SOUNDS: Record<string, AudioBuffer> = {};
+
+var audioContext = new AudioContext();
+
+async function loadSound(name: string) {
+	const response = await fetch(`audio/${name}.wav`);
+	const arrayBuffer = await response.arrayBuffer();
+	const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+	SOUNDS[name] = audioBuffer;
+
+	return audioBuffer;
+}
 
 const createWord = (list: string[], index: number): Word => ({
 	// eslint-disable-next-line unicorn/prefer-spread
@@ -59,6 +78,11 @@ const initialState: State = {
 	finished: false,
 	showInstructions: true,
 	darkMode: true,
+	muted: true,
+	successSounds: ["success"],
+	errorSounds: ["error"],
+	speedErrorSounds: ["speed-error"],
+	clickSounds: ["click"],
 };
 
 type Action = {
@@ -98,9 +122,33 @@ type Action = {
 	type: 'TOGGLE_DARK_MODE';
 } | {
 	type: 'TOGGLE_INSTRUCTIONS';
+} | {
+	type: 'TOGGLE_MUTED';
 };
 
 const reducer = (state: State, action: Action): State => {
+	function playSound(name: string, param = { detune: 100 }) {
+		if (state.muted) {
+			return;
+		}
+
+		if (!SOUNDS[name]) {
+			loadSound(name).then(() => {
+				playSound(name, param);
+			});
+			return;
+		}
+
+		var sound = SOUNDS[name];
+		var source = audioContext.createBufferSource();
+		source.buffer = sound;
+
+		source.detune.value = param.detune;
+
+		source.connect(audioContext.destination);
+		source.start(0);
+	}
+
 	switch (action.type) {
 		case 'SAVE_STATE': {
 			return {
@@ -179,6 +227,15 @@ const reducer = (state: State, action: Action): State => {
 			const hitTargetWPM = wpm >= state.targetWPM;
 
 			if (!match) {
+				// Play sound if the previous character was correct or if the was empty
+				if (
+					!state.word.characters[appendBuffer.length - 1]?.correct === true &&
+					appendBuffer.length > 1 &&
+					state.word.characters[appendBuffer.length - 2]?.correct === true
+				) {
+					playSound(state.errorSounds[0]);
+				}
+
 				return {
 					...state,
 					word: {
@@ -200,8 +257,18 @@ const reducer = (state: State, action: Action): State => {
 				};
 			}
 
+			playSound(state.clickSounds[0]);
+			
 			if (state.word.endTime === undefined && appendBuffer.length >= state.word.characters.length) {
 				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
+
+				if (hitTargetWPM) {
+					// increase pitch the closer to target streak we are
+					const detune = 100 + 100 * (1 - state.targetStreak / streak);
+					playSound(state.successSounds[0], { detune });
+				} else {
+					playSound(state.speedErrorSounds[0]);
+				}
 
 				if (streak >= state.targetStreak) {
 					// eslint-disable-next-line max-depth
@@ -397,6 +464,13 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				darkMode: !state.darkMode,
+				lastSave: Date.now(),
+			};
+		}
+		case "TOGGLE_MUTED": {
+			return {
+				...state,
+				muted: !state.muted,
 				lastSave: Date.now(),
 			};
 		}
