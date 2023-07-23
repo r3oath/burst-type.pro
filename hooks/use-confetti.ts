@@ -17,7 +17,11 @@ const random = (min: number, max: number): number => {
 
 const useConfetti = (state: State): void => {
 	useEffect(() => {
-		if (state.lastEvent !== 'streakComplete' && state.lastEvent !== 'gameComplete') {
+		if (state.enableSFXConfetti === false) {
+			return;
+		}
+
+		if (!['streakComplete', 'gameComplete', 'enableSFXConfetti'].includes(state.lastEvent ?? '')) {
 			return;
 		}
 
@@ -42,7 +46,7 @@ const useConfetti = (state: State): void => {
 				});
 			}
 		}
-	}, [state.lastEvent, state.lastEventTime]);
+	}, [state.enableSFXConfetti, state.lastEvent, state.lastEventTime]);
 };
 
 export default useConfetti;

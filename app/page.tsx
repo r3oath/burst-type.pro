@@ -74,6 +74,10 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'TOGGLE_DARK_MODE'});
 	}, []);
 
+	const handleSetSFXConfetti = useCallback((enabled: boolean) => (): void => {
+		dispatch({type: 'SET_SFX_CONFETTI', payload: enabled});
+	}, []);
+
 	if (!loadedState) {
 		return <Loader/>;
 	}
@@ -88,6 +92,7 @@ const Home = (): React.ReactElement => {
 					onTargetWPMChange={handleTargetWPMChange}
 					onTargetStreakChange={handleTargetStreakChange}
 					onToggleDarkMode={handleToggleDarkMode}
+					onSetSFXConfetti={handleSetSFXConfetti}
 					onWordlistChange={handleWordlistChange}
 					onSave={handleSave}
 					onReset={handleReset}
