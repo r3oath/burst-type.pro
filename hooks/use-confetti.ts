@@ -2,9 +2,17 @@
 
 import {useEffect} from 'react';
 import confetti from 'canvas-confetti';
+import resolveConfig from 'tailwindcss/resolveConfig';
 import type {State} from '@app/config/state';
+import tailwindConfig from '../tailwind.config.js';
 
-const colors = ['#22c55e', '#f0fdf4', '#171717'];
+const fullConfig = resolveConfig(tailwindConfig);
+
+const colors = [
+	fullConfig.theme.colors.green[500],
+	fullConfig.theme.colors.neutral[50],
+	fullConfig.theme.colors.neutral[900],
+];
 
 const random = (min: number, max: number): number => {
 	return Math.random() * (max - min) + min;
