@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import type {Optional, State} from '@app/config/state';
-import {initialState} from '@app/config/state';
+import {captureEvent, initialState} from '@app/config/state';
 
 const useSaveState = (state: State, onSaveState: (state: State) => void): boolean => {
 	const [loadedState, setLoadedState] = useState(false);
@@ -34,6 +34,7 @@ const useSaveState = (state: State, onSaveState: (state: State) => void): boolea
 				const payload: State = {
 					...initialState,
 					...state,
+					...captureEvent('loadState'),
 					highestLevel: state.highestLevel ?? state.level,
 					showInstructions: state.showInstructions ?? true,
 					lastSave: Date.now(),

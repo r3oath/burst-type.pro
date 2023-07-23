@@ -1,6 +1,6 @@
 import en1000 from '../wordlists/en1000.json';
 
-type Event = 'failureSlow' | 'failureTypo' | 'gameComplete' | 'streakComplete' | 'type' | 'wordComplete';
+type Event = 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -400,20 +400,21 @@ const reducer = (state: State, action: Action): State => {
 };
 
 export {
-	initialState,
-	reducer,
+	captureEvent,
 	createWord,
 	defaultLevel,
 	defaultTargetStreak,
 	defaultTargetWPM,
-	wpmOptions,
+	initialState,
+	reducer,
 	streakOptions,
+	wpmOptions,
 };
 
 export type {
+	Action,
+	Character,
 	Optional,
 	State,
 	Word,
-	Character,
-	Action,
 };
