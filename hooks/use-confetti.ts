@@ -21,71 +21,27 @@ const useConfetti = (state: State): void => {
 			return;
 		}
 
-		confetti({
-			particleCount: random(50, 100),
-			angle: 60,
-			spread: 60,
-			origin: {x: 0, y: 1},
-			scalar: 0.5,
-			colors: colors,
-			startVelocity: 50,
-			disableForReducedMotion: true,
-		});
+		const layers = [
+			{particleCount: random(50, 100), scalar: 0.5, startVelocity: 50},
+			{particleCount: random(25, 50), scalar: 1, startVelocity: 60},
+			{particleCount: random(10, 20), scalar: 1.5, startVelocity: 70},
+		];
 
-		confetti({
-			particleCount: random(25, 50),
-			angle: 60,
-			spread: 60,
-			origin: {x: 0, y: 1},
-			scalar: 1,
-			colors: colors,
-			startVelocity: 60,
-			disableForReducedMotion: true,
-		});
+		const canons = [
+			{angle: 60, spread: 60, origin: {x: 0, y: 1}},
+			{angle: 120, spread: 60, origin: {x: 1, y: 1}},
+		];
 
-		confetti({
-			particleCount: random(10, 20),
-			angle: 60,
-			spread: 60,
-			origin: {x: 0, y: 1},
-			scalar: 1.5,
-			colors: colors,
-			startVelocity: 70,
-			disableForReducedMotion: true,
-		});
-
-		confetti({
-			particleCount: random(50, 100),
-			angle: 120,
-			spread: 60,
-			origin: {x: 1, y: 1},
-			scalar: 0.5,
-			colors: colors,
-			startVelocity: 50,
-			disableForReducedMotion: true,
-		});
-
-		confetti({
-			particleCount: random(25, 50),
-			angle: 120,
-			spread: 60,
-			origin: {x: 1, y: 1},
-			scalar: 1,
-			colors: colors,
-			startVelocity: 60,
-			disableForReducedMotion: true,
-		});
-
-		confetti({
-			particleCount: random(10, 20),
-			angle: 120,
-			spread: 60,
-			origin: {x: 1, y: 1},
-			scalar: 1.5,
-			colors: colors,
-			startVelocity: 70,
-			disableForReducedMotion: true,
-		});
+		for (const layer of layers) {
+			for (const canon of canons) {
+				confetti({
+					...layer,
+					...canon,
+					colors,
+					disableForReducedMotion: true,
+				});
+			}
+		}
 	}, [state.lastEvent, state.lastEventTime]);
 };
 
