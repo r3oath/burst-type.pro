@@ -77,7 +77,7 @@ const Home = (): React.ReactElement => {
 	}
 
 	return (
-		<main className={`${state.darkMode ? 'dark' : ''}`}>
+		<main className={state.darkMode ? 'dark' : ''}>
 			<div className="flex items-center justify-center w-full h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors">
 				{state.finished && <Finished/>}
 				{!state.finished && <WordVisualiser state={state} targetStreak={state.targetStreak}/>}
