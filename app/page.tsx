@@ -5,7 +5,7 @@ import en1000 from '../wordlists/en1000.json';
 import type {State} from '@app/config/state';
 import {initialState, reducer} from '@app/config/state';
 import {Finished, Footer, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
-import {useKeys, useSaveState} from '@app/hooks';
+import {useKeys, useSaveState, useConfetti} from '@app/hooks';
 
 const Home = (): React.ReactElement => {
 	const [state, dispatch] = useReducer(reducer, initialState);
@@ -15,6 +15,8 @@ const Home = (): React.ReactElement => {
 	}, []);
 
 	const loadedState = useSaveState(state, onLoadState);
+
+	useConfetti(state);
 
 	const onAlpha = useCallback((key: string): void => {
 		dispatch({type: 'APPEND_BUFFER', payload: key});
