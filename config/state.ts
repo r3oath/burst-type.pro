@@ -1,5 +1,7 @@
 import en1000 from '../wordlists/en1000.json';
 
+type Event = 'failureSlow' | 'failureTypo' | 'gameComplete' | 'streakComplete' | 'type' | 'wordComplete';
+
 type Optional<T> = {
 	[P in keyof T]?: T[P];
 };
@@ -32,7 +34,14 @@ type State = {
 	lastWPM?: number;
 	darkMode: boolean;
 	customWordlist?: string[];
+	lastEvent?: Event;
+	lastEventTime?: number;
 };
+
+const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
+	lastEvent: event,
+	lastEventTime: Date.now(),
+});
 
 const createWord = (list: string[], index: number): Word => ({
 	// eslint-disable-next-line unicorn/prefer-spread
@@ -181,6 +190,7 @@ const reducer = (state: State, action: Action): State => {
 			if (!match) {
 				return {
 					...state,
+					...captureEvent('failureTypo'),
 					word: {
 						...state.word,
 						endTime: Date.now(),
@@ -208,6 +218,7 @@ const reducer = (state: State, action: Action): State => {
 					if (state.level + 1 === (state.customWordlist ?? en1000).length) {
 						return {
 							...state,
+							...captureEvent('gameComplete'),
 							finished: true,
 							lastSave: Date.now(),
 						};
@@ -215,6 +226,7 @@ const reducer = (state: State, action: Action): State => {
 
 					return {
 						...state,
+						...captureEvent('streakComplete'),
 						level: state.level + 1,
 						highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
 						word: createWord(state.customWordlist ?? en1000, state.level + 1),
@@ -225,6 +237,7 @@ const reducer = (state: State, action: Action): State => {
 
 				return {
 					...state,
+					...captureEvent(hitTargetWPM ? 'wordComplete' : 'failureSlow'),
 					buffer: '',
 					word: {
 						...state.word,
@@ -245,9 +258,10 @@ const reducer = (state: State, action: Action): State => {
 				};
 			}
 
-			if (state.word.endTime === undefined && appendBuffer.length < state.word.characters.length) {
+			if (state.word.endTime === undefined) {
 				return {
 					...state,
+					...captureEvent('type'),
 					buffer: appendBuffer,
 					word: {
 						...state.word,
@@ -263,34 +277,13 @@ const reducer = (state: State, action: Action): State => {
 				};
 			}
 
-			if (state.word.wpm === undefined) {
-				return state;
-			}
-
 			const nextBuffer = action.payload;
 			const repeatWord = createWord(state.customWordlist ?? en1000, state.level);
-
-			if (!state.word.match || state.word.wpm < state.targetWPM) {
-				return {
-					...state,
-					word: {
-						...repeatWord,
-						startTime: Date.now(),
-						characters: repeatWord.characters.map((character, index) => ({
-							...character,
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: nextBuffer[index] === undefined
-								? undefined
-								: character.character === nextBuffer[index],
-						})),
-					},
-					buffer: nextBuffer,
-				};
-			}
 
 			if (state.word.streak < state.targetStreak) {
 				return {
 					...state,
+					...captureEvent('type'),
 					word: {
 						...repeatWord,
 						startTime: Date.now(),
