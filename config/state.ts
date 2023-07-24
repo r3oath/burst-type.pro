@@ -1,6 +1,15 @@
 import en1000 from '../wordlists/en1000.json';
 
-type Event = 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
+type Event =
+	| 'disableSFXConfetti'
+	| 'enableSFXConfetti'
+	| 'failureSlow'
+	| 'failureTypo'
+	| 'gameComplete'
+	| 'loadState'
+	| 'streakComplete'
+	| 'type'
+	| 'wordComplete';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -36,6 +45,7 @@ type State = {
 	customWordlist?: string[];
 	lastEvent?: Event;
 	lastEventTime?: number;
+	enableSFXConfetti?: boolean;
 };
 
 const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
@@ -68,6 +78,7 @@ const initialState: State = {
 	finished: false,
 	showInstructions: true,
 	darkMode: true,
+	enableSFXConfetti: true,
 };
 
 type Action = {
@@ -91,6 +102,9 @@ type Action = {
 } | {
 	type: 'SET_CHARACTERS';
 	payload: Character[];
+} | {
+	type: 'SET_SFX_CONFETTI';
+	payload: boolean;
 } | {
 	type: 'SET_TARGET_STREAK';
 	payload: number;
@@ -390,6 +404,14 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				darkMode: !state.darkMode,
+				lastSave: Date.now(),
+			};
+		}
+		case 'SET_SFX_CONFETTI': {
+			return {
+				...state,
+				...captureEvent(action.payload ? 'enableSFXConfetti' : 'disableSFXConfetti'),
+				enableSFXConfetti: action.payload,
 				lastSave: Date.now(),
 			};
 		}

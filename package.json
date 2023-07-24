@@ -19,6 +19,7 @@
 		"@typescript-eslint/parser": "^6.1.0",
 		"@vercel/analytics": "^1.0.1",
 		"autoprefixer": "10.4.14",
+		"canvas-confetti": "^1.6.0",
 		"eslint": "^8.45.0",
 		"eslint-config-next": "^13.4.12",
 		"eslint-plugin-import": "^2.27.5",
@@ -32,5 +33,8 @@
 		"react-dom": "18.2.0",
 		"tailwindcss": "3.3.3",
 		"typescript": "5.1.6"
+	},
+	"devDependencies": {
+		"@types/canvas-confetti": "^1.6.0"
 	}
 }
