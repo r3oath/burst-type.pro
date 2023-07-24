@@ -262,7 +262,7 @@ const Menu = ({
 					<MenuButton label="Streak" value={state.targetStreak} theme="green" onClick={handleMenuStateChange('streak')}/>
 					<MenuButton label="Words" value="W" theme="green" onClick={handleMenuStateChange('words')}/>
 					<div className="h-10 border-l-2 border-neutral-300 dark:border-neutral-800 mx-4"/>
-					<MenuButton label="SFX" value={hasSFXEnabled ? 'On' : 'Off'} theme="green" enabled={hasSFXEnabled} onClick={handleMenuStateChange('sfx')}/>
+					<MenuButton label="SFX" value={hasSFXEnabled ? 'ON' : 'OFF'} theme="green" enabled={hasSFXEnabled} onClick={handleMenuStateChange('sfx')}/>
 					<div className="h-10 border-l-2 border-neutral-300 dark:border-neutral-800 mx-4"/>
 					<MenuButton label="Theme" value={state.darkMode ? 'D' : 'L'} theme="green" onClick={handleToggleDarkMode}/>
 					<MenuButton label="Save" value="S" theme="green" onClick={handleSave}/>
