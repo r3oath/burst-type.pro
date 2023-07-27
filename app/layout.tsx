@@ -2,6 +2,7 @@ import './globals.css';
 import {Fira_Mono} from 'next/font/google';
 import type {Metadata} from 'next';
 import {Analytics} from '@vercel/analytics/react';
+import {AudioContextProvider} from '@app/components/audio-context-provider';
 
 const fira = Fira_Mono({subsets: ['latin'], weight: ['400', '700']});
 
@@ -29,7 +30,9 @@ const RootLayout = ({children}: {children: React.ReactNode}): React.ReactElement
 	return (
 		<html lang="en">
 			<body className={`antialiased ${fira.className}`}>
-				{children}
+				<AudioContextProvider>
+					{children}
+				</AudioContextProvider>
 				<Analytics/>
 			</body>
 		</html>

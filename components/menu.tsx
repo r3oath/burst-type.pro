@@ -13,6 +13,7 @@ type MenuProperties = {
 	onTargetStreakChange: (streak: number) => () => void;
 	onToggleDarkMode: () => void;
 	onSetSFXConfetti: (enabled: boolean) => () => void;
+	onSetSoundEnabled: (enabled: boolean) => () => void;
 	onWordlistChange: (wordlist: string[]) => void;
 	onReset: () => void;
 	onSave: () => void;
@@ -41,7 +42,13 @@ type SFXMenuProperties = {
 	onClose: () => void;
 };
 
-type MenuState = 'closed' | 'sfx' | 'streak' | 'words' | 'wpm';
+type SoundMenuProperties = {
+	state: State;
+	onSetSoundEnabled: (enabled: boolean) => () => void;
+	onClose: () => void;
+};
+
+type MenuState = 'closed' | 'sfx' | 'sound' | 'streak' | 'words' | 'wpm';
 
 type WordlistPreset = {
 	name: string;
@@ -213,12 +220,59 @@ const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onClose: handle
 	);
 };
 
+const SoundMenu = ({
+	state,
+	onSetSoundEnabled: handleSetSoundEnabled,
+	onClose: handleOnClose,
+}: SoundMenuProperties): React.ReactElement => {
+	return (
+		<div className="fixed flex items-center justify-center inset-0 w-full h-full bg-neutral-100 dark:bg-neutral-900 bg-opacity-80 backdrop-blur-md z-50">
+			<div className="mx-auto w-full max-w-xl">
+				<h2 className="text-neutral-900 dark:text-neutral-100 uppercase text-4xl font-bold">
+					Sound Effects
+				</h2>
+				<div className="mt-6 flex flex-col">
+					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">
+						Enabled
+					</p>
+					<div className="mt-4 flex flex-wrap items-center gap-4">
+						<MenuButton
+							label="Conf"
+							value="ON"
+							theme="green"
+							enabled={state.enableSound ?? true}
+							onClick={handleSetSoundEnabled(true)}
+						/>
+						<MenuButton
+							label="Conf"
+							value="OFF"
+							theme="green"
+							enabled={!(state.enableSound ?? true)}
+							onClick={handleSetSoundEnabled(false)}
+						/>
+					</div>
+				</div>
+				<div className="mt-8 flex flex-col">
+					<button
+						className="w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 bg-neutral-300 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-2 border-neutral-400 dark:border-neutral-700 rounded-md"
+						type="button"
+						onClick={handleOnClose}
+					>
+						Close
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 const Menu = ({
 	state,
 	onTargetWPMChange: handleTargetWPMChange,
 	onTargetStreakChange: handleTargetStreakChange,
 	onToggleDarkMode: handleToggleDarkMode,
 	onSetSFXConfetti: handleSetSFXConfetti,
+	onSetSoundEnabled: handleSetSoundEnabled,
 	onWordlistChange: handleWordlistChange,
 	onSave: handleSave,
 	onReset: handleReset,
@@ -230,6 +284,7 @@ const Menu = ({
 	};
 
 	const hasSFXEnabled = useMemo(() => state.enableSFXConfetti ?? true, [state.enableSFXConfetti]);
+	const hasSoundEnabled = useMemo(() => state.enableSound ?? true, [state.enableSound]);
 
 	const subMenus: Record<string, SubMenuProperties> = useMemo(() => ({
 		wpm: {
@@ -263,6 +318,7 @@ const Menu = ({
 					<MenuButton label="Words" value="W" theme="green" onClick={handleMenuStateChange('words')}/>
 					<div className="h-10 border-l-2 border-neutral-300 dark:border-neutral-800 mx-4"/>
 					<MenuButton label="SFX" value={hasSFXEnabled ? 'ON' : 'OFF'} theme="green" enabled={hasSFXEnabled} onClick={handleMenuStateChange('sfx')}/>
+					<MenuButton label="SOUND" value={hasSoundEnabled ? 'ON' : 'OFF'} theme="green" enabled={hasSoundEnabled} onClick={handleSetSoundEnabled(!hasSoundEnabled)}/>
 					<div className="h-10 border-l-2 border-neutral-300 dark:border-neutral-800 mx-4"/>
 					<MenuButton label="Theme" value={state.darkMode ? 'D' : 'L'} theme="green" onClick={handleToggleDarkMode}/>
 					<MenuButton label="Save" value="S" theme="green" onClick={handleSave}/>
@@ -285,6 +341,7 @@ const Menu = ({
 			{menuState === 'streak' && <SubMenu {...subMenus.streak}/>}
 			{menuState === 'words' && <WordlistMenu state={state} onWordlistChange={handleWordlistChange} onClose={handleMenuStateChange('closed')}/>}
 			{menuState === 'sfx' && <SFXMenu state={state} onSetSFXConfetti={handleSetSFXConfetti} onClose={handleMenuStateChange('closed')}/>}
+			{menuState === 'sound' && <SoundMenu state={state} onSetSoundEnabled={handleSetSoundEnabled} onClose={handleMenuStateChange('closed')}/>}
 		</Fragment>
 	);
 };

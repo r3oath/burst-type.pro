@@ -1,15 +1,7 @@
 import en1000 from '../wordlists/en1000.json';
 
 type Event =
-	| 'disableSFXConfetti'
-	| 'enableSFXConfetti'
-	| 'failureSlow'
-	| 'failureTypo'
-	| 'gameComplete'
-	| 'loadState'
-	| 'streakComplete'
-	| 'type'
-	| 'wordComplete';
+	'disableSFXConfetti' | 'disableSound' | 'enableSFXConfetti' | 'enableSound' | 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -46,6 +38,15 @@ type State = {
 	lastEvent?: Event;
 	lastEventTime?: number;
 	enableSFXConfetti?: boolean;
+	enableSound?: boolean;
+	sounds: {
+		type: string[];
+		wordComplete: string[];
+		gameComplete: string[];
+		streakComplete: string[];
+		failureSlow: string[];
+		failureTypo: string[];
+	};	
 };
 
 const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
@@ -79,6 +80,27 @@ const initialState: State = {
 	showInstructions: true,
 	darkMode: true,
 	enableSFXConfetti: true,
+	enableSound: true,
+	sounds: {
+		type: [
+			'/sounds/type.wav',
+		],
+		wordComplete: [
+			'/sounds/word-complete.wav',
+		],
+		gameComplete: [
+			'/sounds/game-complete.wav',
+		],
+		streakComplete: [
+			'/sounds/streak-complete.wav',
+		],
+		failureSlow: [
+			'/sounds/failure-slow.wav',
+		],
+		failureTypo: [
+			'/sounds/failure-typo.wav',
+		],
+	},
 };
 
 type Action = {
@@ -104,6 +126,9 @@ type Action = {
 	payload: Character[];
 } | {
 	type: 'SET_SFX_CONFETTI';
+	payload: boolean;
+} | {
+	type: 'SET_SOUND_ENABLED';
 	payload: boolean;
 } | {
 	type: 'SET_TARGET_STREAK';
@@ -415,6 +440,16 @@ const reducer = (state: State, action: Action): State => {
 				lastSave: Date.now(),
 			};
 		}
+
+		case 'SET_SOUND_ENABLED': {
+			return {
+				...state,
+				...captureEvent(action.payload ? 'enableSound' : 'disableSound'),
+				enableSound: action.payload,
+				lastSave: Date.now(),
+			};
+		}
+
 		default: {
 			return state;
 		}
