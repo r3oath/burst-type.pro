@@ -1,4 +1,5 @@
 'use client';
+
 import type {State} from '@app/config/state';
 import {useCallback, useContext, useEffect, useState} from 'react';
 import {Context} from '../contexts/audio';
