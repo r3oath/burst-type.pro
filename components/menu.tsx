@@ -251,7 +251,10 @@ const Menu = ({
 		setMenuState(menuState);
 	};
 
-	const hasSFXEnabled = useMemo(() => state.enableSFXConfetti ?? true, [state.enableSFXConfetti]);
+	const hasSFXEnabled = useMemo(
+		() => [state.enableSFXConfetti, state.enableSFXSound].some(Boolean),
+		[state.enableSFXConfetti, state.enableSFXSound],
+	);
 
 	const subMenus: Record<string, SubMenuProperties> = useMemo(() => ({
 		wpm: {
