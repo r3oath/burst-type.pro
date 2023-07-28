@@ -3,8 +3,10 @@
 import type {State} from '@app/config/state';
 import {useCallback, useEffect, useState} from 'react';
 
+type AudioCache = Record<string, AudioBuffer>;
+
 const useSound = (state: State): void => {
-	const [loadedSounds, setLoadedSounds] = useState<{[url: string]: AudioBuffer}>({});
+	const [loadedSounds, setLoadedSounds] = useState<AudioCache>({});
 	const [lastTimestamp, setLastTimestamp] = useState<number>();
 	const [audioContext, setAudioContext] = useState<AudioContext>();
 
