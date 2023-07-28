@@ -46,7 +46,8 @@ const useConfetti = (state: State): void => {
 				});
 			}
 		}
-	}, [state.enableSFXConfetti, state.lastEvent, state.lastEventTime]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [state.lastEventTime]);
 };
 
 export default useConfetti;

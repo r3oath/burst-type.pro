@@ -1,9 +1,11 @@
 'use client';
 
-import type {State} from '@app/config/state';
 import {useCallback, useEffect, useState} from 'react';
+import type {State} from '@app/config/state';
 
 type AudioCache = Record<string, AudioBuffer>;
+
+const randomElement = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
 const useSound = (state: State): void => {
 	const [loadedSounds, setLoadedSounds] = useState<AudioCache>({});
@@ -11,10 +13,11 @@ const useSound = (state: State): void => {
 
 	useEffect(() => {
 		const context = new AudioContext();
+
 		setAudioContext(context);
 	}, []);
 
-	const loadSound = async (url: string): Promise<AudioBuffer> => {
+	const loadSound = useCallback(async (url: string): Promise<AudioBuffer> => {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (loadedSounds[url] !== undefined) {
 			return loadedSounds[url];
@@ -26,79 +29,59 @@ const useSound = (state: State): void => {
 
 		const response = await fetch(url);
 		const arrayBuffer = await response.arrayBuffer();
-
 		const sound = await audioContext.decodeAudioData(arrayBuffer);
 
-		setLoadedSounds({
-			...loadedSounds,
-			[url]: sound,
-		});
-		
+		setLoadedSounds({...loadedSounds, [url]: sound});
+
 		return sound;
-	};
+	}, [audioContext, loadedSounds]);
 
-	const playSound = useCallback(
-		// eslint-disable-next-line unicorn/no-object-as-default-parameter
-		async (url: string, options = {detune: 0}): Promise<void> => {
-			if (audioContext === undefined) {
-				return;
-			}
-			
-			const sound = await loadSound(url);
-
-			const source = audioContext.createBufferSource();
-			source.buffer = sound;
-
-			source.detune.value = options.detune;
-
-			source.connect(audioContext.destination);
-			source.start(0);
-		}, [audioContext, loadedSounds],
-	);
-
-	useEffect(() => {
-		if (state.enableSFXSound === false || state.lastEvent === undefined) {
+	const playSound = useCallback(async (url: string, detune = 0): Promise<void> => {
+		if (audioContext === undefined) {
 			return;
 		}
 
-		let sound = '';
-		let detune = 0;
+		const sound = await loadSound(url);
+		const source = audioContext.createBufferSource();
 
-		const sounds = state.sounds;
+		source.buffer = sound;
+		source.detune.value = detune;
+		source.connect(audioContext.destination);
+		source.start(0);
+	}, [audioContext, loadSound]);
+
+	useEffect(() => {
+		if (state.enableSFXSound === false) {
+			return;
+		}
 
 		switch (state.lastEvent) {
 			case 'type': {
-				sound = sounds.type[Math.floor(Math.random() * sounds.type.length)];
+				playSound(randomElement(state.sounds.type));
 				break;
 			}
 			case 'wordComplete': {
-				sound = sounds.wordComplete[Math.floor(Math.random() * sounds.gameComplete.length)];
-				detune = 100 + 100 * (state.word.streak / state.targetStreak); 
+				playSound(randomElement(state.sounds.wordComplete), 100 + 100 * (state.word.streak / state.targetStreak));
 				break;
 			}
 			case 'streakComplete': {
-				sound = sounds.streakComplete[Math.floor(Math.random() * sounds.streakComplete.length)];
+				playSound(randomElement(state.sounds.streakComplete));
 				break;
 			}
 			case 'failureSlow': {
-				sound = sounds.failureSlow[Math.floor(Math.random() * sounds.failureSlow.length)];
+				playSound(randomElement(state.sounds.failureSlow));
 				break;
 			}
 			case 'failureTypo': {
-				sound = sounds.failureTypo[Math.floor(Math.random() * sounds.failureTypo.length)];
+				playSound(randomElement(state.sounds.failureTypo));
 				break;
 			}
 			default: {
 				break;
 			}
 		}
-		
-		if (sound === '') {
-			return;
-		}
-		
-		playSound(sound, {detune});		
-	}, [state, playSound]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [state.lastEventTime]);
 };
 
 export default useSound;
