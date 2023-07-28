@@ -7,7 +7,6 @@ type AudioCache = Record<string, AudioBuffer>;
 
 const useSound = (state: State): void => {
 	const [loadedSounds, setLoadedSounds] = useState<AudioCache>({});
-	const [lastTimestamp, setLastTimestamp] = useState<number>();
 	const [audioContext, setAudioContext] = useState<AudioContext>();
 
 	useEffect(() => {
@@ -58,7 +57,7 @@ const useSound = (state: State): void => {
 	);
 
 	useEffect(() => {
-		if (state.enableSFXSound === false || lastTimestamp === state.lastEventTime || state.lastEvent === undefined) {
+		if (state.enableSFXSound === false || state.lastEvent === undefined) {
 			return;
 		}
 
@@ -98,8 +97,6 @@ const useSound = (state: State): void => {
 			return;
 		}
 		
-		setLastTimestamp(state.lastEventTime);
-
 		playSound(sound, {detune});		
 	}, [state, playSound]);
 };
