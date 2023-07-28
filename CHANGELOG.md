@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.5.0](https://github.com/r3oath/burst-type.pro/compare/v1.4.0...v1.5.0) (2023-07-28)
+
+
+### Features
+
+* add a credits screen and contributors list ([0acd447](https://github.com/r3oath/burst-type.pro/commit/0acd447300ef8af6c3a2e6287a836ed7e2d2ed21))
+* add confetti celebration effect after streak and game completion (under new SFX menu) ([135f4a6](https://github.com/r3oath/burst-type.pro/commit/135f4a6236cb1be75c40d8347d1bdf5fc16564fc))
+* add sound effects for typing, errors, and streak completion ([96ddf3e](https://github.com/r3oath/burst-type.pro/commit/96ddf3eac406bf4bc183cbf1b4a9b4ce32eed956))
+
 ## [1.4.0](https://github.com/r3oath/burst-type.pro/compare/v1.3.0...v1.4.0) (2023-07-14)
 
 
