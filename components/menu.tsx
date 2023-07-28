@@ -211,14 +211,14 @@ const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onSetSFXSound: 
 					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Sounds</p>
 					<div className="mt-4 flex flex-wrap items-center gap-4">
 						<MenuButton
-							label="Conf"
+							label="Sound"
 							value="ON"
 							theme="green"
 							enabled={state.enableSFXSound ?? true}
 							onClick={handleSetSFXSound(true)}
 						/>
 						<MenuButton
-							label="Conf"
+							label="Sound"
 							value="OFF"
 							theme="green"
 							enabled={!(state.enableSFXSound ?? true)}
