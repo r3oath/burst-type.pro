@@ -1,7 +1,17 @@
 import en1000 from '../wordlists/en1000.json';
 
 type Event =
-	'disableSFXConfetti' | 'disableSFXSound' | 'enableSFXConfetti' | 'enableSFXSound' | 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
+	| 'disableSFXConfetti'
+	| 'disableSFXSound'
+	| 'enableSFXConfetti'
+	| 'enableSFXSound'
+	| 'failureSlow'
+	| 'failureTypo'
+	| 'gameComplete'
+	| 'loadState'
+	| 'streakComplete'
+	| 'type'
+	| 'wordComplete';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
