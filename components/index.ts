@@ -6,3 +6,4 @@ export {default as Loader} from './loader';
 export {default as Menu} from './menu';
 export {default as MenuButton} from './menu-button';
 export {default as WordVisualiser} from './word-visualiser';
+export {default as Credits} from './credits';
