@@ -82,24 +82,12 @@ const initialState: State = {
 	enableSFXConfetti: true,
 	enableSound: true,
 	sounds: {
-		type: [
-			'/sounds/type.wav',
-		],
-		wordComplete: [
-			'/sounds/word-complete.wav',
-		],
-		gameComplete: [
-			'/sounds/game-complete.wav',
-		],
-		streakComplete: [
-			'/sounds/streak-complete.wav',
-		],
-		failureSlow: [
-			'/sounds/failure-slow.wav',
-		],
-		failureTypo: [
-			'/sounds/failure-typo.wav',
-		],
+		type: ['/sounds/type.wav'],
+		wordComplete: ['/sounds/word-complete.wav'],
+		gameComplete: ['/sounds/game-complete.wav'],
+		streakComplete: ['/sounds/streak-complete.wav'],
+		failureSlow: ['/sounds/failure-slow.wav'],
+		failureTypo: ['/sounds/failure-typo.wav'],
 	},
 };
 
