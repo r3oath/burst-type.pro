@@ -79,8 +79,8 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'SET_SFX_CONFETTI', payload: enabled});
 	}, []);
 
-	const handleSetSoundEnabled = useCallback((enabled: boolean) => (): void => {
-		dispatch({type: 'SET_SOUND_ENABLED', payload: enabled});
+	const handleSetSFXSound = useCallback((enabled: boolean) => (): void => {
+		dispatch({type: 'SET_SFX_SOUND', payload: enabled});
 	}, []);
 
 	if (!loadedState) {
@@ -98,8 +98,8 @@ const Home = (): React.ReactElement => {
 					onTargetStreakChange={handleTargetStreakChange}
 					onToggleDarkMode={handleToggleDarkMode}
 					onSetSFXConfetti={handleSetSFXConfetti}
+					onSetSFXSound={handleSetSFXSound}
 					onWordlistChange={handleWordlistChange}
-					onSetSoundEnabled={handleSetSoundEnabled}
 					onSave={handleSave}
 					onReset={handleReset}
 				/>

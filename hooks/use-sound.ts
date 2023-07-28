@@ -56,7 +56,7 @@ const useSound = (state: State): void => {
 	);
 
 	useEffect(() => {
-		if (state.enableSound === false || lastTimestamp === state.lastEventTime || state.lastEvent === undefined) {
+		if (state.enableSFXSound === false || lastTimestamp === state.lastEventTime || state.lastEvent === undefined) {
 			return;
 		}
 

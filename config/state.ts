@@ -1,7 +1,7 @@
 import en1000 from '../wordlists/en1000.json';
 
 type Event =
-	'disableSFXConfetti' | 'disableSound' | 'enableSFXConfetti' | 'enableSound' | 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
+	'disableSFXConfetti' | 'disableSFXSound' | 'enableSFXConfetti' | 'enableSFXSound' | 'failureSlow' | 'failureTypo' | 'gameComplete' | 'loadState' | 'streakComplete' | 'type' | 'wordComplete';
 
 type Optional<T> = {
 	[P in keyof T]?: T[P];
@@ -38,7 +38,7 @@ type State = {
 	lastEvent?: Event;
 	lastEventTime?: number;
 	enableSFXConfetti?: boolean;
-	enableSound?: boolean;
+	enableSFXSound?: boolean;
 	sounds: {
 		type: string[];
 		wordComplete: string[];
@@ -80,7 +80,7 @@ const initialState: State = {
 	showInstructions: true,
 	darkMode: true,
 	enableSFXConfetti: true,
-	enableSound: true,
+	enableSFXSound: true,
 	sounds: {
 		type: ['/sounds/type.wav'],
 		wordComplete: ['/sounds/word-complete.wav'],
@@ -116,7 +116,7 @@ type Action = {
 	type: 'SET_SFX_CONFETTI';
 	payload: boolean;
 } | {
-	type: 'SET_SOUND_ENABLED';
+	type: 'SET_SFX_SOUND';
 	payload: boolean;
 } | {
 	type: 'SET_TARGET_STREAK';
@@ -429,11 +429,11 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
-		case 'SET_SOUND_ENABLED': {
+		case 'SET_SFX_SOUND': {
 			return {
 				...state,
-				...captureEvent(action.payload ? 'enableSound' : 'disableSound'),
-				enableSound: action.payload,
+				...captureEvent(action.payload ? 'enableSFXSound' : 'disableSFXSound'),
+				enableSFXSound: action.payload,
 				lastSave: Date.now(),
 			};
 		}
