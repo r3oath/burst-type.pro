@@ -13,6 +13,7 @@ type MenuProperties = {
 	onTargetStreakChange: (streak: number) => () => void;
 	onToggleDarkMode: () => void;
 	onSetSFXConfetti: (enabled: boolean) => () => void;
+	onSetSFXSound: (enabled: boolean) => () => void;
 	onWordlistChange: (wordlist: string[]) => void;
 	onReset: () => void;
 	onSave: () => void;
@@ -38,6 +39,7 @@ type WordlistMenuProperties = {
 type SFXMenuProperties = {
 	state: State;
 	onSetSFXConfetti: (enabled: boolean) => () => void;
+	onSetSFXSound: (enabled: boolean) => () => void;
 	onClose: () => void;
 };
 
@@ -181,7 +183,7 @@ const WordlistMenu = ({state, onWordlistChange, onClose: handleOnClose}: Wordlis
 	);
 };
 
-const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onClose: handleOnClose}: SFXMenuProperties): React.ReactElement => {
+const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onSetSFXSound: handleSetSFXSound, onClose: handleOnClose}: SFXMenuProperties): React.ReactElement => {
 	return (
 		<div className="fixed flex items-center justify-center inset-0 w-full h-full bg-neutral-100 dark:bg-neutral-900 bg-opacity-80 backdrop-blur-md z-50">
 			<div className="mx-auto w-full max-w-xl">
@@ -205,6 +207,25 @@ const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onClose: handle
 						/>
 					</div>
 				</div>
+				<div className="mt-6 flex flex-col">
+					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Sounds</p>
+					<div className="mt-4 flex flex-wrap items-center gap-4">
+						<MenuButton
+							label="Sound"
+							value="ON"
+							theme="green"
+							enabled={state.enableSFXSound ?? true}
+							onClick={handleSetSFXSound(true)}
+						/>
+						<MenuButton
+							label="Sound"
+							value="OFF"
+							theme="green"
+							enabled={!(state.enableSFXSound ?? true)}
+							onClick={handleSetSFXSound(false)}
+						/>
+					</div>
+				</div>
 				<div className="mt-8 flex flex-col">
 					<button className="w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 bg-neutral-300 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-2 border-neutral-400 dark:border-neutral-700 rounded-md" type="button" onClick={handleOnClose}>Close</button>
 				</div>
@@ -219,6 +240,7 @@ const Menu = ({
 	onTargetStreakChange: handleTargetStreakChange,
 	onToggleDarkMode: handleToggleDarkMode,
 	onSetSFXConfetti: handleSetSFXConfetti,
+	onSetSFXSound: handleSetSFXSound,
 	onWordlistChange: handleWordlistChange,
 	onSave: handleSave,
 	onReset: handleReset,
@@ -229,7 +251,10 @@ const Menu = ({
 		setMenuState(menuState);
 	};
 
-	const hasSFXEnabled = useMemo(() => state.enableSFXConfetti ?? true, [state.enableSFXConfetti]);
+	const hasSFXEnabled = useMemo(
+		() => [state.enableSFXConfetti, state.enableSFXSound].some(Boolean),
+		[state.enableSFXConfetti, state.enableSFXSound],
+	);
 
 	const subMenus: Record<string, SubMenuProperties> = useMemo(() => ({
 		wpm: {
@@ -284,7 +309,7 @@ const Menu = ({
 			{menuState === 'wpm' && <SubMenu {...subMenus.wpm}/>}
 			{menuState === 'streak' && <SubMenu {...subMenus.streak}/>}
 			{menuState === 'words' && <WordlistMenu state={state} onWordlistChange={handleWordlistChange} onClose={handleMenuStateChange('closed')}/>}
-			{menuState === 'sfx' && <SFXMenu state={state} onSetSFXConfetti={handleSetSFXConfetti} onClose={handleMenuStateChange('closed')}/>}
+			{menuState === 'sfx' && <SFXMenu state={state} onSetSFXConfetti={handleSetSFXConfetti} onSetSFXSound={handleSetSFXSound} onClose={handleMenuStateChange('closed')}/>}
 		</Fragment>
 	);
 };
