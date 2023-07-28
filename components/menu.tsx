@@ -207,8 +207,8 @@ const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onSetSFXSound: 
 						/>
 					</div>
 				</div>
-				<div className="mt-6 flex flex-col">
-					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Sounds</p>
+				<div className="mt-8 flex flex-col">
+					<p className="text-neutral-900 dark:text-neutral-100 uppercase text-xs">Sounds (typing, errors, & streaks)</p>
 					<div className="mt-4 flex flex-wrap items-center gap-4">
 						<MenuButton
 							label="Sound"
