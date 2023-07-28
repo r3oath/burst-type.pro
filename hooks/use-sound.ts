@@ -1,13 +1,17 @@
 'use client';
 
 import type {State} from '@app/config/state';
-import {useCallback, useContext, useEffect, useState} from 'react';
-import {Context} from '../contexts/audio';
+import {useCallback, useEffect, useState} from 'react';
 
 const useSound = (state: State): void => {
 	const [loadedSounds, setLoadedSounds] = useState<{[url: string]: AudioBuffer}>({});
 	const [lastTimestamp, setLastTimestamp] = useState<number>();
-	const audioContext = useContext(Context);
+	const [audioContext, setAudioContext] = useState<AudioContext>();
+
+	useEffect(() => {
+		const context = new AudioContext();
+		setAudioContext(context);
+	}, []);
 
 	const loadSound = async (url: string): Promise<AudioBuffer> => {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
