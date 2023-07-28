@@ -34,7 +34,7 @@ const Credits = ({onToggleShowCredits: handleToggleShowCredits}: CreditsProperti
 
 	return (
 		<div className="fixed flex items-center justify-center inset-0 w-full h-full bg-neutral-100 dark:bg-neutral-900 bg-opacity-80 backdrop-blur-md z-50">
-			<div className="mx-auto w-full max-w-xl">
+			<div className="mx-auto w-full max-w-2xl">
 				<h2 className="text-neutral-900 dark:text-neutral-100 uppercase text-4xl font-bold">Credits</h2>
 				<div className="mt-6 flex flex-col">
 					<p className="text-neutral-900 dark:text-neutral-100">
@@ -49,7 +49,16 @@ const Credits = ({onToggleShowCredits: handleToggleShowCredits}: CreditsProperti
 						keyboard layout while building burst speed and muscle memory.
 					</p>
 					<p className="mt-4 text-neutral-900 dark:text-neutral-100">
-					Special thanks to the following contributors for their help in making BurstType even better:
+						It has since evolved into a general-layout type-training app (still focused on building burst speed) with the options for users to set custom targets and wordlists. This app is
+						{' '}
+						<a className="text-blue-500 hover:underline" href="https://colemak.com/">open-source</a>
+						{/* eslint-disable-next-line react/jsx-curly-brace-presence */}
+						{''}
+						, so feel free to propose or implement new features or fixes.
+					</p>
+					<hr className="my-6 border-neutral-300 dark:border-neutral-700"/>
+					<p className="text-neutral-900 dark:text-neutral-100">
+						Thank you to the following people for their help in making this app even better (all GitHub contributors):
 					</p>
 					{contributors.length === 0 && (
 						<p className="mt-4 text-neutral-500 dark:text-neutral-500">
