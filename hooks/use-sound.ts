@@ -84,9 +84,6 @@ const useSound = (state: State): void => {
 				break;
 			}
 			case 'failureTypo': {
-				if (!(state.word.characters[0].correct ?? false)) {
-					return;
-				} 
 				sound = sounds.failureTypo[Math.floor(Math.random() * sounds.failureTypo.length)];
 				break;
 			}
