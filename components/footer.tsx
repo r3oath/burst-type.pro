@@ -2,6 +2,10 @@
 
 import packageJSON from '../package.json';
 
+type FooterProperties = {
+	onToggleShowCredits: () => void;
+};
+
 type Link = {
 	href: string;
 	label: string;
@@ -48,9 +52,15 @@ const links: Link[] = [
 	},
 ];
 
-const Footer = (): React.ReactElement => {
+const Footer = ({onToggleShowCredits: handleToggleShowCredits}: FooterProperties): React.ReactElement => {
 	return (
 		<div className="fixed flex gap-4 justify-center bottom-0 w-full px-10 mb-5">
+			<button className="flex gap-1 items-center text-sm text-neutral-400 dark:text-neutral-600 hover:text-neutral-800 dark:hover:text-neutral-200 tracking-tighter" type="button" onClick={handleToggleShowCredits}>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+					<path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+				</svg>
+				<span>Credits</span>
+			</button>
 			{links.map(({href, label, icon}) => (
 				<a key={href} className="flex gap-1 items-center text-sm text-neutral-400 dark:text-neutral-600 hover:text-neutral-800 dark:hover:text-neutral-200 tracking-tighter" href={href}>
 					{icon('w-4 h-4')}

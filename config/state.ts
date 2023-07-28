@@ -42,6 +42,7 @@ type State = {
 	finished: boolean;
 	lastSave?: number;
 	showInstructions: boolean;
+	showCredits: boolean;
 	lastWPM?: number;
 	darkMode: boolean;
 	customWordlist?: string[];
@@ -88,6 +89,7 @@ const initialState: State = {
 	targetStreak: defaultTargetStreak,
 	finished: false,
 	showInstructions: true,
+	showCredits: false,
 	darkMode: true,
 	enableSFXConfetti: true,
 	enableSFXSound: true,
@@ -140,6 +142,8 @@ type Action = {
 } | {
 	type: 'SET_WORDLIST';
 	payload: string[];
+} | {
+	type: 'TOGGLE_CREDITS';
 } | {
 	type: 'TOGGLE_DARK_MODE';
 } | {
@@ -428,6 +432,12 @@ const reducer = (state: State, action: Action): State => {
 				...state,
 				darkMode: !state.darkMode,
 				lastSave: Date.now(),
+			};
+		}
+		case 'TOGGLE_CREDITS': {
+			return {
+				...state,
+				showCredits: !state.showCredits,
 			};
 		}
 		case 'SET_SFX_CONFETTI': {

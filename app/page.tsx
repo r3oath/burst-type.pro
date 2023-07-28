@@ -4,7 +4,7 @@ import {useReducer, useCallback} from 'react';
 import en1000 from '../wordlists/en1000.json';
 import type {State} from '@app/config/state';
 import {initialState, reducer} from '@app/config/state';
-import {Finished, Footer, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
+import {Credits, Finished, Footer, Instructions, LevelMap, Loader, Menu, WordVisualiser} from '@app/components';
 import {useKeys, useSaveState, useConfetti, useSound} from '@app/hooks';
 
 const Home = (): React.ReactElement => {
@@ -75,6 +75,10 @@ const Home = (): React.ReactElement => {
 		dispatch({type: 'TOGGLE_DARK_MODE'});
 	}, []);
 
+	const handleToggleCredits = useCallback((): void => {
+		dispatch({type: 'TOGGLE_CREDITS'});
+	}, []);
+
 	const handleSetSFXConfetti = useCallback((enabled: boolean) => (): void => {
 		dispatch({type: 'SET_SFX_CONFETTI', payload: enabled});
 	}, []);
@@ -104,8 +108,9 @@ const Home = (): React.ReactElement => {
 					onReset={handleReset}
 				/>
 				<LevelMap state={state} wordlist={state.customWordlist ?? en1000}/>
-				<Footer/>
+				<Footer onToggleShowCredits={handleToggleCredits}/>
 				{state.showInstructions && <Instructions onGetStarted={handleToggleInstructions}/>}
+				{state.showCredits && <Credits onToggleShowCredits={handleToggleCredits}/>}
 			</div>
 		</main>
 	);
