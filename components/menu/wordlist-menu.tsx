@@ -26,7 +26,7 @@ const WordlistMenu = ({onClose: handleOnClose}: WordlistMenuProperties): React.R
 	const [isSaveEnabled, setIsSaveEnabled] = useState(false);
 
 	const handleWordlistChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-		const isValidList = event.target.value.trim().split(/[ ,]+/).every((word) => word.length > 0 && /^[a-z]+$/.test(word));
+		const isValidList = event.target.value.trim().split(/[ ,]+/).every((word) => word.length > 0);
 
 		setWordlistValue(event.target.value);
 		setIsSaveEnabled(isValidList);
