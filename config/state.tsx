@@ -1,6 +1,8 @@
 'use client';
 
 import {createContext, useContext, useReducer} from 'react';
+import * as RF from './reducers';
+import type * as RT from './reducers';
 import en1000 from '../wordlists/en1000.json';
 
 type Event =
@@ -15,10 +17,6 @@ type Event =
 	| 'streakComplete'
 	| 'type'
 	| 'wordComplete';
-
-type Optional<T> = {
-	[P in keyof T]?: T[P];
-};
 
 type Character = {
 	character: string;
@@ -65,58 +63,25 @@ type State = {
 	};
 };
 
-type Action = {
-	type: 'HANDLE_CANCEL';
-	payload: KeyboardEvent;
-} | {
-	type: 'JUMP_BACKWARDS';
-} | {
-	type: 'JUMP_END';
-} | {
-	type: 'JUMP_FORWARDS';
-} | {
-	type: 'JUMP_START';
-} | {
-	type: 'LOAD_STATE';
-	payload: State;
-} | {
-	type: 'RESET_STATE';
-} | {
-	type: 'SAVE_STATE';
-} | {
-	type: 'SET_BUFFER';
-	payload: string;
-} | {
-	type: 'SET_CHARACTERS';
-	payload: Character[];
-} | {
-	type: 'SET_FOCUS';
-	payload: boolean;
-} | {
-	type: 'SET_SFX_CONFETTI';
-	payload: boolean;
-} | {
-	type: 'SET_SFX_SOUND';
-	payload: boolean;
-} | {
-	type: 'SET_TARGET_STREAK';
-	payload: number;
-} | {
-	type: 'SET_TARGET_WPM';
-	payload: number;
-} | {
-	type: 'SET_WORD';
-	payload: Word;
-} | {
-	type: 'SET_WORDLIST';
-	payload: string[];
-} | {
-	type: 'TOGGLE_CREDITS';
-} | {
-	type: 'TOGGLE_DARK_MODE';
-} | {
-	type: 'TOGGLE_INSTRUCTIONS';
-};
+type Action =
+	| RT.HandleCancelAction
+	| RT.JumpBackwardsAction
+	| RT.JumpEndAction
+	| RT.JumpForwardsAction
+	| RT.JumpStartAction
+	| RT.LoadStateAction
+	| RT.ResetStateAction
+	| RT.SaveStateAction
+	| RT.SetBufferAction
+	| RT.SetFocusAction
+	| RT.SetSFXConfettiAction
+	| RT.SetSFXSoundAction
+	| RT.SetTargetStreakAction
+	| RT.SetTargetWPMAction
+	| RT.SetWordlistAction
+	| RT.ToggleCreditsAction
+	| RT.ToggleDarkModeAction
+	| RT.ToggleInstructionsAction;
 
 const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
 	lastEvent: event,
@@ -169,350 +134,24 @@ const useAppState = (): [State, React.Dispatch<Action>] => useContext(AppContext
 
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
-		case 'SAVE_STATE': {
-			return {
-				...state,
-				lastSave: Date.now(),
-			};
-		}
-		case 'LOAD_STATE': {
-			return action.payload;
-		}
-		case 'SET_FOCUS': {
-			return {
-				...state,
-				focused: action.payload,
-			};
-		}
-		case 'SET_TARGET_STREAK': {
-			return {
-				...state,
-				targetStreak: action.payload,
-				lastSave: Date.now(),
-			};
-		}
-		case 'SET_TARGET_WPM': {
-			return {
-				...state,
-				targetWPM: action.payload,
-				lastSave: Date.now(),
-			};
-		}
-		case 'SET_WORD': {
-			return {
-				...state,
-				word: action.payload,
-			};
-		}
-		case 'SET_CHARACTERS': {
-			return {
-				...state,
-				word: {
-					...state.word,
-					characters: action.payload,
-				},
-			};
-		}
-		case 'SET_WORDLIST': {
-			return {
-				...initialState,
-				level: 0,
-				highestLevel: 0,
-				word: createWord(action.payload, 0),
-				targetWPM: state.targetWPM,
-				targetStreak: state.targetStreak,
-				darkMode: state.darkMode,
-				customWordlist: action.payload,
-				lastSave: Date.now(),
-				showInstructions: false,
-			};
-		}
-		case 'SET_BUFFER': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.finished) {
-				return state;
-			}
-
-			if (state.word.streak >= state.targetStreak) {
-				return state;
-			}
-
-			// eslint-disable-next-line unicorn/prefer-spread
-			const match = action.payload.split('').every((character, index) => character === state.word.characters[index].character);
-			const timeElapsed = (Date.now() - (state.word.startTime ?? 0)) / 60_000;
-			const wpm = Math.round(action.payload.length / 5 / timeElapsed);
-			const hitTargetWPM = wpm >= state.targetWPM;
-			const capsDetected = action.payload !== action.payload.toLowerCase();
-
-			if (!match) {
-				return {
-					...state,
-					...captureEvent('failureTypo'),
-					word: {
-						...state.word,
-						endTime: Date.now(),
-						streak: 0,
-						characters: state.word.characters.map((character, index) => ({
-							...character,
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: action.payload[index] === undefined
-								? undefined
-								: character.character === action.payload[index],
-						})),
-						wpm: 0,
-						match: false,
-						hitTargetWPM: false,
-					},
-					buffer: '',
-					capsDetected,
-				};
-			}
-
-			if (state.word.endTime === undefined && action.payload.length >= state.word.characters.length) {
-				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
-
-				if (streak >= state.targetStreak) {
-					// eslint-disable-next-line max-depth
-					if (state.level + 1 === (state.customWordlist ?? en1000).length) {
-						return {
-							...state,
-							...captureEvent('gameComplete'),
-							finished: true,
-							lastSave: Date.now(),
-							capsDetected,
-						};
-					}
-
-					return {
-						...state,
-						...captureEvent('streakComplete'),
-						level: state.level + 1,
-						highestLevel: Math.max(state.highestLevel ?? 0, state.level + 1),
-						word: createWord(state.customWordlist ?? en1000, state.level + 1),
-						buffer: '',
-						lastSave: Date.now(),
-						lastWPM: wpm,
-						capsDetected,
-					};
-				}
-
-				return {
-					...state,
-					...captureEvent(hitTargetWPM ? 'wordComplete' : 'failureSlow'),
-					buffer: '',
-					word: {
-						...state.word,
-						endTime: Date.now(),
-						streak,
-						characters: state.word.characters.map((character, index) => ({
-							...character,
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: action.payload[index] === undefined
-								? undefined
-								: character.character === action.payload[index],
-						})),
-						wpm,
-						match,
-						hitTargetWPM,
-					},
-					lastWPM: wpm,
-					capsDetected,
-				};
-			}
-
-			if (state.word.endTime === undefined) {
-				return {
-					...state,
-					...captureEvent('type'),
-					buffer: action.payload,
-					word: {
-						...state.word,
-						startTime: state.word.startTime ?? Date.now(),
-						characters: state.word.characters.map((character, index) => ({
-							...character,
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: action.payload[index] === undefined
-								? undefined
-								: character.character === action.payload[index],
-						})),
-					},
-					capsDetected,
-				};
-			}
-
-			const nextBuffer = action.payload;
-			const repeatWord = createWord(state.customWordlist ?? en1000, state.level);
-
-			if (state.word.streak < state.targetStreak) {
-				return {
-					...state,
-					...captureEvent('type'),
-					word: {
-						...repeatWord,
-						startTime: Date.now(),
-						characters: repeatWord.characters.map((character, index) => ({
-							...character,
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: nextBuffer[index] === undefined
-								? undefined
-								: character.character === nextBuffer[index],
-						})),
-						streak: state.word.streak,
-					},
-					buffer: nextBuffer,
-					capsDetected,
-				};
-			}
-
-			return state;
-		}
-		case 'HANDLE_CANCEL': {
-			if (!state.focused) {
-				return state;
-			}
-
-			action.payload.preventDefault();
-			action.payload.stopPropagation();
-
-			return {
-				...state,
-				...captureEvent('failureTypo'),
-				word: {
-					...state.word,
-					endTime: Date.now(),
-					streak: 0,
-					characters: state.word.characters.map((character) => ({
-						...character,
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-						correct: false,
-					})),
-					wpm: 0,
-					match: false,
-					hitTargetWPM: false,
-				},
-				buffer: '',
-			};
-		}
-		case 'JUMP_FORWARDS': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.highestLevel === undefined) {
-				return state;
-			}
-
-			const nextLevel = Math.min(state.highestLevel, state.level + 1);
-
-			return {
-				...state,
-				level: nextLevel,
-				word: createWord(state.customWordlist ?? en1000, nextLevel),
-				buffer: '',
-				focused: true,
-				finished: false,
-				lastSave: Date.now(),
-			};
-		}
-		case 'JUMP_BACKWARDS': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.highestLevel === undefined) {
-				return state;
-			}
-
-			const previousLevel = Math.max(0, state.level - 1);
-
-			return {
-				...state,
-				level: previousLevel,
-				word: createWord(state.customWordlist ?? en1000, previousLevel),
-				buffer: '',
-				focused: true,
-				finished: false,
-				lastSave: Date.now(),
-			};
-		}
-		case 'JUMP_START': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			return {
-				...state,
-				level: 0,
-				word: createWord(state.customWordlist ?? en1000, 0),
-				buffer: '',
-				focused: true,
-				finished: false,
-				lastSave: Date.now(),
-			};
-		}
-		case 'JUMP_END': {
-			if (state.showInstructions) {
-				return state;
-			}
-
-			if (state.highestLevel === undefined) {
-				return state;
-			}
-
-			return {
-				...state,
-				level: state.highestLevel,
-				word: createWord(state.customWordlist ?? en1000, state.highestLevel),
-				buffer: '',
-				focused: true,
-				finished: false,
-				lastSave: Date.now(),
-			};
-		}
-		case 'RESET_STATE': {
-			return {
-				...initialState,
-				lastSave: Date.now(),
-			};
-		}
-		case 'TOGGLE_INSTRUCTIONS': {
-			return {
-				...state,
-				showInstructions: !state.showInstructions,
-			};
-		}
-		case 'TOGGLE_DARK_MODE': {
-			return {
-				...state,
-				darkMode: !state.darkMode,
-				lastSave: Date.now(),
-			};
-		}
-		case 'TOGGLE_CREDITS': {
-			return {
-				...state,
-				showCredits: !state.showCredits,
-			};
-		}
-		case 'SET_SFX_CONFETTI': {
-			return {
-				...state,
-				...captureEvent(action.payload ? 'enableSFXConfetti' : 'disableSFXConfetti'),
-				enableSFXConfetti: action.payload,
-				lastSave: Date.now(),
-			};
-		}
-		case 'SET_SFX_SOUND': {
-			return {
-				...state,
-				...captureEvent(action.payload ? 'enableSFXSound' : 'disableSFXSound'),
-				enableSFXSound: action.payload,
-				lastSave: Date.now(),
-			};
-		}
+		case 'SAVE_STATE': { return RF.saveState(state); }
+		case 'LOAD_STATE': { return RF.loadState(state, action); }
+		case 'SET_FOCUS': { return RF.setFocus(state, action); }
+		case 'SET_TARGET_STREAK': { return RF.setTargetStreak(state, action); }
+		case 'SET_TARGET_WPM': { return RF.setTargetWPM(state, action); }
+		case 'SET_WORDLIST': { return RF.setWordlist(state, action); }
+		case 'SET_BUFFER': { return RF.setBuffer(state, action); }
+		case 'HANDLE_CANCEL': { return RF.handleCancel(state, action); }
+		case 'JUMP_FORWARDS': { return RF.jumpForwards(state); }
+		case 'JUMP_BACKWARDS': { return RF.jumpBackwards(state); }
+		case 'JUMP_START': { return RF.jumpStart(state); }
+		case 'JUMP_END': { return RF.jumpEnd(state); }
+		case 'RESET_STATE': { return RF.resetState(); }
+		case 'TOGGLE_INSTRUCTIONS': { return RF.toggleInstructions(state); }
+		case 'TOGGLE_DARK_MODE': { return RF.toggleDarkMode(state); }
+		case 'TOGGLE_CREDITS': { return RF.toggleCredits(state); }
+		case 'SET_SFX_CONFETTI': { return RF.setSFXConfetti(state, action); }
+		case 'SET_SFX_SOUND': { return RF.setSFXSound(state, action); }
 		default: {
 			return state;
 		}
@@ -533,9 +172,6 @@ export {
 	AppState,
 	captureEvent,
 	createWord,
-	defaultLevel,
-	defaultTargetStreak,
-	defaultTargetWPM,
 	initialState,
 	reducer,
 	streakOptions,
@@ -546,7 +182,6 @@ export {
 export type {
 	Action,
 	Character,
-	Optional,
 	State,
 	Word,
 };
