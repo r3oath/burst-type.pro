@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {useAppState, type Character, type State} from '@app/config/state';
 
 const characterClasses = (state: State, character: Character): string => {
@@ -46,7 +46,11 @@ const streakIndicatorClasses = (state: State, index: number): string => {
 };
 
 const WordVisualiser = (): React.ReactElement | undefined => {
-	const [state] = useAppState();
+	const [state, dispatch] = useAppState();
+
+	const handleSetFocus = useCallback((): void => {
+		dispatch({type: 'SET_FOCUS', payload: true});
+	}, [dispatch]);
 
 	const statusIndicator = useMemo(() => {
 		if (state.word.endTime !== undefined && state.word.hitTargetWPM) {
@@ -81,7 +85,7 @@ const WordVisualiser = (): React.ReactElement | undefined => {
 	}
 
 	return (
-		<div className="text-center w-2/3">
+		<div className="relative text-center w-2/3 p-10">
 			<p className="relative text-9xl font-bold tracking-wider">
 				{state.word.characters.filter(w => w.character !== ' ').map((character, index) => (
 					// eslint-disable-next-line react/no-array-index-key
@@ -102,6 +106,16 @@ const WordVisualiser = (): React.ReactElement | undefined => {
 			<p className="text-base mt-1 tracking-tighter text-neutral-600 dark:text-neutral-400">
 				{lastWPMIndicator}
 			</p>
+			{!state.focused && (
+				<div className="absolute inset-0 flex items-center justify-center bg-neutral-50/50 dark:bg-neutral-900/50 backdrop-blur-lg transition-colors">
+					<button className="flex items-center gap-3 font-medium text-lg text-neutral-900 dark:text-neutral-200 hover:bg-neutral-900/10 hover:dark:bg-neutral-100/10 px-4 py-2 rounded-full" type="button" onClick={handleSetFocus}>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
+							<path fillRule="evenodd" d="M12 1.5a.75.75 0 01.75.75V4.5a.75.75 0 01-1.5 0V2.25A.75.75 0 0112 1.5zM5.636 4.136a.75.75 0 011.06 0l1.592 1.591a.75.75 0 01-1.061 1.06l-1.591-1.59a.75.75 0 010-1.061zm12.728 0a.75.75 0 010 1.06l-1.591 1.592a.75.75 0 01-1.06-1.061l1.59-1.591a.75.75 0 011.061 0zm-6.816 4.496a.75.75 0 01.82.311l5.228 7.917a.75.75 0 01-.777 1.148l-2.097-.43 1.045 3.9a.75.75 0 01-1.45.388l-1.044-3.899-1.601 1.42a.75.75 0 01-1.247-.606l.569-9.47a.75.75 0 01.554-.68zM3 10.5a.75.75 0 01.75-.75H6a.75.75 0 010 1.5H3.75A.75.75 0 013 10.5zm14.25 0a.75.75 0 01.75-.75h2.25a.75.75 0 010 1.5H18a.75.75 0 01-.75-.75zm-8.962 3.712a.75.75 0 010 1.061l-1.591 1.591a.75.75 0 11-1.061-1.06l1.591-1.592a.75.75 0 011.06 0z" clipRule="evenodd"/>
+						</svg>
+						<span>Click here to focus &amp; continue</span>
+					</button>
+				</div>
+			)}
 		</div>
 	);
 };

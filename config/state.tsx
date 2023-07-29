@@ -36,6 +36,7 @@ type Word = {
 };
 
 type State = {
+	focused: boolean;
 	word: Word;
 	level: number;
 	highestLevel?: number;
@@ -64,8 +65,8 @@ type State = {
 };
 
 type Action = {
-	type: 'APPEND_BUFFER';
-	payload: string;
+	type: 'HANDLE_CANCEL';
+	payload: KeyboardEvent;
 } | {
 	type: 'JUMP_BACKWARDS';
 } | {
@@ -82,8 +83,14 @@ type Action = {
 } | {
 	type: 'SAVE_STATE';
 } | {
+	type: 'SET_BUFFER';
+	payload: string;
+} | {
 	type: 'SET_CHARACTERS';
 	payload: Character[];
+} | {
+	type: 'SET_FOCUS';
+	payload: boolean;
 } | {
 	type: 'SET_SFX_CONFETTI';
 	payload: boolean;
@@ -131,6 +138,7 @@ const wpmOptions = [30, 60, 90, 120, 200];
 const streakOptions = [1, 3, 5, 10, 25];
 
 const initialState: State = {
+	focused: true,
 	word: createWord(en1000, defaultLevel),
 	level: defaultLevel,
 	highestLevel: defaultLevel,
@@ -167,6 +175,12 @@ const reducer = (state: State, action: Action): State => {
 		}
 		case 'LOAD_STATE': {
 			return action.payload;
+		}
+		case 'SET_FOCUS': {
+			return {
+				...state,
+				focused: action.payload,
+			};
 		}
 		case 'SET_TARGET_STREAK': {
 			return {
@@ -211,7 +225,7 @@ const reducer = (state: State, action: Action): State => {
 				showInstructions: false,
 			};
 		}
-		case 'APPEND_BUFFER': {
+		case 'SET_BUFFER': {
 			if (state.showInstructions) {
 				return state;
 			}
@@ -220,19 +234,14 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			if (state.buffer.length === 0 && action.payload === ' ') {
-				return state;
-			}
-
 			if (state.word.streak >= state.targetStreak) {
 				return state;
 			}
 
-			const appendBuffer = state.buffer + action.payload;
 			// eslint-disable-next-line unicorn/prefer-spread
-			const match = appendBuffer.split('').every((character, index) => character === state.word.characters[index].character);
+			const match = action.payload.split('').every((character, index) => character === state.word.characters[index].character);
 			const timeElapsed = (Date.now() - (state.word.startTime ?? 0)) / 60_000;
-			const wpm = Math.round(appendBuffer.length / 5 / timeElapsed);
+			const wpm = Math.round(action.payload.length / 5 / timeElapsed);
 			const hitTargetWPM = wpm >= state.targetWPM;
 
 			if (!match) {
@@ -246,9 +255,9 @@ const reducer = (state: State, action: Action): State => {
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: appendBuffer[index] === undefined
+							correct: action.payload[index] === undefined
 								? undefined
-								: character.character === appendBuffer[index],
+								: character.character === action.payload[index],
 						})),
 						wpm: 0,
 						match: false,
@@ -258,7 +267,7 @@ const reducer = (state: State, action: Action): State => {
 				};
 			}
 
-			if (state.word.endTime === undefined && appendBuffer.length >= state.word.characters.length) {
+			if (state.word.endTime === undefined && action.payload.length >= state.word.characters.length) {
 				const streak = hitTargetWPM ? state.word.streak + 1 : 0;
 
 				if (streak >= state.targetStreak) {
@@ -280,6 +289,7 @@ const reducer = (state: State, action: Action): State => {
 						word: createWord(state.customWordlist ?? en1000, state.level + 1),
 						buffer: '',
 						lastSave: Date.now(),
+						lastWPM: wpm,
 					};
 				}
 
@@ -294,9 +304,9 @@ const reducer = (state: State, action: Action): State => {
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: appendBuffer[index] === undefined
+							correct: action.payload[index] === undefined
 								? undefined
-								: character.character === appendBuffer[index],
+								: character.character === action.payload[index],
 						})),
 						wpm,
 						match,
@@ -310,16 +320,16 @@ const reducer = (state: State, action: Action): State => {
 				return {
 					...state,
 					...captureEvent('type'),
-					buffer: appendBuffer,
+					buffer: action.payload,
 					word: {
 						...state.word,
 						startTime: state.word.startTime ?? Date.now(),
 						characters: state.word.characters.map((character, index) => ({
 							...character,
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-							correct: appendBuffer[index] === undefined
+							correct: action.payload[index] === undefined
 								? undefined
-								: character.character === appendBuffer[index],
+								: character.character === action.payload[index],
 						})),
 					},
 				};
@@ -349,6 +359,33 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			return state;
+		}
+		case 'HANDLE_CANCEL': {
+			if (!state.focused) {
+				return state;
+			}
+
+			action.payload.preventDefault();
+			action.payload.stopPropagation();
+
+			return {
+				...state,
+				...captureEvent('failureTypo'),
+				word: {
+					...state.word,
+					endTime: Date.now(),
+					streak: 0,
+					characters: state.word.characters.map((character) => ({
+						...character,
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+						correct: false,
+					})),
+					wpm: 0,
+					match: false,
+					hitTargetWPM: false,
+				},
+				buffer: '',
+			};
 		}
 		case 'JUMP_FORWARDS': {
 			if (state.showInstructions) {
@@ -455,7 +492,6 @@ const reducer = (state: State, action: Action): State => {
 				lastSave: Date.now(),
 			};
 		}
-
 		case 'SET_SFX_SOUND': {
 			return {
 				...state,
@@ -464,7 +500,6 @@ const reducer = (state: State, action: Action): State => {
 				lastSave: Date.now(),
 			};
 		}
-
 		default: {
 			return state;
 		}

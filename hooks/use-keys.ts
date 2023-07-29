@@ -1,56 +1,35 @@
 'use client';
 
-import {useCallback, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useAppState} from '@app/config/state';
 
 const useKeys = (): void => {
 	const [, dispatch] = useAppState();
 
-	const onType = useCallback((key: string): void => {
-		dispatch({type: 'APPEND_BUFFER', payload: key});
-	}, [dispatch]);
-
-	const onJumpBackwards = useCallback((): void => {
-		dispatch({type: 'JUMP_BACKWARDS'});
-	}, [dispatch]);
-
-	const onJumpForwards = useCallback((): void => {
-		dispatch({type: 'JUMP_FORWARDS'});
-	}, [dispatch]);
-
-	const onJumpStart = useCallback((): void => {
-		dispatch({type: 'JUMP_START'});
-	}, [dispatch]);
-
-	const onJumpEnd = useCallback((): void => {
-		dispatch({type: 'JUMP_END'});
-	}, [dispatch]);
-
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent): void => {
-			if (event.key === ' ' || /^[a-z]$/.test(event.key)) {
-				onType(event.key);
-			}
-
 			if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
-				onJumpBackwards();
+				dispatch({type: 'JUMP_BACKWARDS'});
 			}
 
 			if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-				onJumpForwards();
+				dispatch({type: 'JUMP_FORWARDS'});
 			}
 
 			if (event.key === 'Home') {
-				onJumpStart();
+				dispatch({type: 'JUMP_START'});
 			}
 
 			if (event.key === 'End') {
-				onJumpEnd();
+				dispatch({type: 'JUMP_END'});
 			}
 
 			if (event.key === 'Tab' || event.key === 'Enter') {
-				event.preventDefault();
-				onType(' ');
+				dispatch({type: 'HANDLE_CANCEL', payload: event});
+			}
+
+			if (event.key === 'Escape') {
+				dispatch({type: 'SET_FOCUS', payload: false});
 			}
 		};
 
@@ -59,7 +38,7 @@ const useKeys = (): void => {
 		return () => {
 			window.removeEventListener('keydown', handleKeyPress);
 		};
-	}, [onType, onJumpBackwards, onJumpEnd, onJumpForwards, onJumpStart]);
+	}, [dispatch]);
 };
 
 export default useKeys;
