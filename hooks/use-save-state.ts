@@ -1,13 +1,18 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import type {Optional, State} from '@app/config/state';
-import {captureEvent, initialState} from '@app/config/state';
+import {captureEvent, initialState, useAppState} from '@app/config/state';
 
-const useSaveState = (state: State, onSaveState: (state: State) => void): boolean => {
+const useSaveState = (): boolean => {
+	const [state, dispatch] = useAppState();
 	const [loadedState, setLoadedState] = useState(false);
 	const router = useRouter();
+
+	const onLoadState = useCallback((state: State): void => {
+		dispatch({type: 'LOAD_STATE', payload: state});
+	}, [dispatch]);
 
 	useEffect(() => {
 		const isOnLegacyDomain = window.location.hostname === 'descent-typing.vercel.app';
@@ -24,7 +29,7 @@ const useSaveState = (state: State, onSaveState: (state: State) => void): boolea
 					router.push('https://www.burst-type.pro/');
 				}
 
-				onSaveState({
+				onLoadState({
 					...initialState,
 					lastSave: Date.now(),
 				});
@@ -52,7 +57,7 @@ const useSaveState = (state: State, onSaveState: (state: State) => void): boolea
 
 					router.push(`https://www.burst-type.pro/migrate?s=${base64State}`);
 				} else {
-					onSaveState(payload);
+					onLoadState(payload);
 				}
 			}
 

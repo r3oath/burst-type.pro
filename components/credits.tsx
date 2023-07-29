@@ -1,8 +1,5 @@
-import {useEffect, useState} from 'react';
-
-type CreditsProperties = {
-	onToggleShowCredits: () => void;
-};
+import {useCallback, useEffect, useState} from 'react';
+import {useAppState} from '@app/config/state';
 
 type Contributor = {
 	id: number;
@@ -16,10 +13,13 @@ type Contributor = {
 
 const blacklist = new Set(['r3oath']);
 
-const Credits = ({onToggleShowCredits: handleToggleShowCredits}: CreditsProperties): React.ReactElement => {
+const Credits = (): React.ReactElement | undefined => {
+	const [state, dispatch] = useAppState();
 	const [contributors, setContributors] = useState<Contributor[]>([]);
 
-	console.log(contributors);
+	const handleToggleCredits = useCallback((): void => {
+		dispatch({type: 'TOGGLE_CREDITS'});
+	}, [dispatch]);
 
 	useEffect(() => {
 		const fetchContributors = async (): Promise<void> => {
@@ -31,6 +31,10 @@ const Credits = ({onToggleShowCredits: handleToggleShowCredits}: CreditsProperti
 
 		fetchContributors();
 	}, []);
+
+	if (!state.showCredits) {
+		return undefined;
+	}
 
 	return (
 		<div className="fixed flex items-center justify-center inset-0 w-full h-full bg-neutral-100 dark:bg-neutral-900 bg-opacity-80 backdrop-blur-md z-50">
@@ -80,7 +84,7 @@ const Credits = ({onToggleShowCredits: handleToggleShowCredits}: CreditsProperti
 					)}
 				</div>
 				<div className="mt-8 flex flex-col">
-					<button className="w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 bg-neutral-300 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-2 border-neutral-400 dark:border-neutral-700 rounded-md" type="button" onClick={handleToggleShowCredits}>Close</button>
+					<button className="w-full px-4 py-2 text-neutral-900 dark:text-neutral-200 bg-neutral-300 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border-2 border-neutral-400 dark:border-neutral-700 rounded-md" type="button" onClick={handleToggleCredits}>Close</button>
 				</div>
 			</div>
 		</div>

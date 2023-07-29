@@ -1,13 +1,14 @@
 'use client';
 
 import {useCallback, useEffect, useState} from 'react';
-import type {State} from '@app/config/state';
+import {useAppState} from '@app/config/state';
 
 type AudioCache = Record<string, AudioBuffer>;
 
 const randomElement = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
-const useSound = (state: State): void => {
+const useSound = (): void => {
+	const [state] = useAppState();
 	const [loadedSounds, setLoadedSounds] = useState<AudioCache>({});
 	const [audioContext, setAudioContext] = useState<AudioContext>();
 

@@ -1,23 +1,11 @@
-import {Fragment, useMemo, useState} from 'react';
+import {Fragment, useCallback, useMemo, useState} from 'react';
 import type {State} from '@app/config/state';
-import {streakOptions, wpmOptions} from '@app/config/state';
+import {streakOptions, useAppState, wpmOptions} from '@app/config/state';
 import type {Theme} from '@app/components/menu-button';
 import MenuButton from '@app/components/menu-button';
 import en1000 from '../wordlists/en1000.json';
 import endbl from '../wordlists/endbl.json';
 import rickroll from '../wordlists/rickroll.json';
-
-type MenuProperties = {
-	state: State;
-	onTargetWPMChange: (wpm: number) => () => void;
-	onTargetStreakChange: (streak: number) => () => void;
-	onToggleDarkMode: () => void;
-	onSetSFXConfetti: (enabled: boolean) => () => void;
-	onSetSFXSound: (enabled: boolean) => () => void;
-	onWordlistChange: (wordlist: string[]) => void;
-	onReset: () => void;
-	onSave: () => void;
-};
 
 type SubMenuProperties = {
 	title: string;
@@ -234,22 +222,51 @@ const SFXMenu = ({state, onSetSFXConfetti: handleSetSFXConfetti, onSetSFXSound: 
 	);
 };
 
-const Menu = ({
-	state,
-	onTargetWPMChange: handleTargetWPMChange,
-	onTargetStreakChange: handleTargetStreakChange,
-	onToggleDarkMode: handleToggleDarkMode,
-	onSetSFXConfetti: handleSetSFXConfetti,
-	onSetSFXSound: handleSetSFXSound,
-	onWordlistChange: handleWordlistChange,
-	onSave: handleSave,
-	onReset: handleReset,
-}: MenuProperties): React.ReactElement => {
+const Menu = (): React.ReactElement => {
+	const [state, dispatch] = useAppState();
 	const [menuState, setMenuState] = useState<MenuState>('closed');
 
-	const handleMenuStateChange = (menuState: MenuState) => (): void => {
+	const handleTargetWPMChange = useCallback((wpm: number) => (): void => {
+		dispatch({type: 'SET_TARGET_WPM', payload: wpm});
+	}, [dispatch]);
+
+	const handleTargetStreakChange = useCallback((streak: number) => (): void => {
+		dispatch({type: 'SET_TARGET_STREAK', payload: streak});
+	}, [dispatch]);
+
+	const handleWordlistChange = useCallback((wordlist: string[]): void => {
+		dispatch({type: 'SET_WORDLIST', payload: wordlist});
+	}, [dispatch]);
+
+	const handleReset = useCallback((): void => {
+		if (!confirm('Are you sure you want to reset your progress?')) {
+			return;
+		}
+
+		dispatch({type: 'RESET_STATE'});
+	}, [dispatch]);
+
+	const handleSave = useCallback((): void => {
+		dispatch({type: 'SAVE_STATE'});
+
+		alert('Your progress and settings have been saved!');
+	}, [dispatch]);
+
+	const handleToggleDarkMode = useCallback((): void => {
+		dispatch({type: 'TOGGLE_DARK_MODE'});
+	}, [dispatch]);
+
+	const handleSetSFXConfetti = useCallback((enabled: boolean) => (): void => {
+		dispatch({type: 'SET_SFX_CONFETTI', payload: enabled});
+	}, [dispatch]);
+
+	const handleSetSFXSound = useCallback((enabled: boolean) => (): void => {
+		dispatch({type: 'SET_SFX_SOUND', payload: enabled});
+	}, [dispatch]);
+
+	const handleMenuStateChange = useCallback((menuState: MenuState) => (): void => {
 		setMenuState(menuState);
-	};
+	}, []);
 
 	const hasSFXEnabled = useMemo(
 		() => [state.enableSFXConfetti, state.enableSFXSound].some(Boolean),
@@ -277,7 +294,7 @@ const Menu = ({
 			maxValue: 25,
 			theme: 'green',
 		},
-	}), [handleTargetStreakChange, handleTargetWPMChange, state.targetStreak, state.targetWPM]);
+	}), [handleMenuStateChange, handleTargetStreakChange, handleTargetWPMChange, state.targetStreak, state.targetWPM]);
 
 	return (
 		<Fragment>

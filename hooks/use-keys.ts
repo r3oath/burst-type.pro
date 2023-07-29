@@ -1,18 +1,31 @@
 'use client';
 
-import {useEffect} from 'react';
+import {useCallback, useEffect} from 'react';
+import {useAppState} from '@app/config/state';
 
-type UseKeysProperties = {
-	onType: (key: string) => void;
-	onJumpBackwards: () => void;
-	onJumpForwards: () => void;
-	onJumpStart: () => void;
-	onJumpEnd: () => void;
-};
+const useKeys = (): void => {
+	const [, dispatch] = useAppState();
 
-const useKeys = ({
-	onType, onJumpBackwards, onJumpForwards, onJumpStart, onJumpEnd,
-}: UseKeysProperties): void => {
+	const onType = useCallback((key: string): void => {
+		dispatch({type: 'APPEND_BUFFER', payload: key});
+	}, [dispatch]);
+
+	const onJumpBackwards = useCallback((): void => {
+		dispatch({type: 'JUMP_BACKWARDS'});
+	}, [dispatch]);
+
+	const onJumpForwards = useCallback((): void => {
+		dispatch({type: 'JUMP_FORWARDS'});
+	}, [dispatch]);
+
+	const onJumpStart = useCallback((): void => {
+		dispatch({type: 'JUMP_START'});
+	}, [dispatch]);
+
+	const onJumpEnd = useCallback((): void => {
+		dispatch({type: 'JUMP_END'});
+	}, [dispatch]);
+
 	useEffect(() => {
 		const handleKeyPress = (event: KeyboardEvent): void => {
 			if (event.key === ' ' || /^[a-z]$/.test(event.key)) {

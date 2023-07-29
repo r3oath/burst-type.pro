@@ -3,7 +3,7 @@
 import {useEffect} from 'react';
 import confetti from 'canvas-confetti';
 import defaultColors from 'tailwindcss/colors';
-import type {State} from '@app/config/state';
+import {useAppState} from '@app/config/state';
 
 const colors = [
 	defaultColors.green[500],
@@ -15,7 +15,9 @@ const random = (min: number, max: number): number => {
 	return Math.random() * (max - min) + min;
 };
 
-const useConfetti = (state: State): void => {
+const useConfetti = (): void => {
+	const [state] = useAppState();
+
 	useEffect(() => {
 		if (state.enableSFXConfetti === false) {
 			return;

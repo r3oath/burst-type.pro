@@ -1,10 +1,5 @@
 import {useMemo} from 'react';
-import type {Character, State} from '@app/config/state';
-
-type WordProperties = {
-	state: State;
-	targetStreak: number;
-};
+import {useAppState, type Character, type State} from '@app/config/state';
 
 const characterClasses = (state: State, character: Character): string => {
 	if (state.word.streak === state.targetStreak) {
@@ -50,7 +45,9 @@ const streakIndicatorClasses = (state: State, index: number): string => {
 	return 'bg-neutral-300 dark:bg-neutral-700';
 };
 
-const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactElement => {
+const WordVisualiser = (): React.ReactElement | undefined => {
+	const [state] = useAppState();
+
 	const statusIndicator = useMemo(() => {
 		if (state.word.endTime !== undefined && state.word.hitTargetWPM) {
 			return 'Success';
@@ -79,6 +76,10 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 		return `Last WPM score: ${state.lastWPM}`;
 	}, [state.lastWPM]);
 
+	if (state.finished) {
+		return undefined;
+	}
+
 	return (
 		<div className="text-center w-2/3">
 			<p className="relative text-9xl font-bold tracking-wider">
@@ -90,7 +91,7 @@ const WordVisualiser = ({state, targetStreak}: WordProperties): React.ReactEleme
 				))}
 			</p>
 			<div className="flex flex-wrap gap-1 justify-center mt-6 -skew-y-12 rotate-12">
-				{Array.from({length: targetStreak}).map((_, index) => (
+				{Array.from({length: state.targetStreak}).map((_, index) => (
 					// eslint-disable-next-line react/no-array-index-key
 					<div key={index} className={`w-4 h-4 ${streakIndicatorClasses(state, index)}`}/>
 				))}

@@ -1,3 +1,6 @@
+'use client';
+
+import {createContext, useContext, useReducer} from 'react';
 import en1000 from '../wordlists/en1000.json';
 
 type Event =
@@ -57,50 +60,7 @@ type State = {
 		streakComplete: string[];
 		failureSlow: string[];
 		failureTypo: string[];
-	};	
-};
-
-const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
-	lastEvent: event,
-	lastEventTime: Date.now(),
-});
-
-const createWord = (list: string[], index: number): Word => ({
-	// eslint-disable-next-line unicorn/prefer-spread
-	characters: `${list[index]} `.toLowerCase().split('').map(character => ({character})),
-	match: false,
-	hitTargetWPM: false,
-	streak: 0,
-});
-
-const defaultLevel = 0;
-const defaultTargetWPM = 90;
-const defaultTargetStreak = 5;
-
-const wpmOptions = [30, 60, 90, 120, 200];
-const streakOptions = [1, 3, 5, 10, 25];
-
-const initialState: State = {
-	word: createWord(en1000, defaultLevel),
-	level: defaultLevel,
-	highestLevel: defaultLevel,
-	buffer: '',
-	targetWPM: defaultTargetWPM,
-	targetStreak: defaultTargetStreak,
-	finished: false,
-	showInstructions: true,
-	showCredits: false,
-	darkMode: true,
-	enableSFXConfetti: true,
-	enableSFXSound: true,
-	sounds: {
-		type: ['/sounds/type.wav'],
-		wordComplete: ['/sounds/word-complete.wav'],
-		gameComplete: ['/sounds/game-complete.wav'],
-		streakComplete: ['/sounds/streak-complete.wav'],
-		failureSlow: ['/sounds/failure-slow.wav'],
-		failureTypo: ['/sounds/failure-typo.wav'],
-	},
+	};
 };
 
 type Action = {
@@ -149,6 +109,53 @@ type Action = {
 } | {
 	type: 'TOGGLE_INSTRUCTIONS';
 };
+
+const captureEvent = (event: Event): Pick<State, 'lastEvent' | 'lastEventTime'> => ({
+	lastEvent: event,
+	lastEventTime: Date.now(),
+});
+
+const createWord = (list: string[], index: number): Word => ({
+	// eslint-disable-next-line unicorn/prefer-spread
+	characters: `${list[index]} `.toLowerCase().split('').map(character => ({character})),
+	match: false,
+	hitTargetWPM: false,
+	streak: 0,
+});
+
+const defaultLevel = 0;
+const defaultTargetWPM = 90;
+const defaultTargetStreak = 5;
+
+const wpmOptions = [30, 60, 90, 120, 200];
+const streakOptions = [1, 3, 5, 10, 25];
+
+const initialState: State = {
+	word: createWord(en1000, defaultLevel),
+	level: defaultLevel,
+	highestLevel: defaultLevel,
+	buffer: '',
+	targetWPM: defaultTargetWPM,
+	targetStreak: defaultTargetStreak,
+	finished: false,
+	showInstructions: true,
+	showCredits: false,
+	darkMode: true,
+	enableSFXConfetti: true,
+	enableSFXSound: true,
+	sounds: {
+		type: ['/sounds/type.wav'],
+		wordComplete: ['/sounds/word-complete.wav'],
+		gameComplete: ['/sounds/game-complete.wav'],
+		streakComplete: ['/sounds/streak-complete.wav'],
+		failureSlow: ['/sounds/failure-slow.wav'],
+		failureTypo: ['/sounds/failure-typo.wav'],
+	},
+};
+
+const AppContext = createContext<[State, React.Dispatch<Action>]>([initialState, () => {}]);
+
+const useAppState = (): [State, React.Dispatch<Action>] => useContext(AppContext);
 
 const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
@@ -464,7 +471,18 @@ const reducer = (state: State, action: Action): State => {
 	}
 };
 
+const AppState = ({children}: {children: React.ReactNode}): JSX.Element => {
+	const contextValue = useReducer(reducer, initialState);
+
+	return (
+		<AppContext.Provider value={contextValue}>
+			{children}
+		</AppContext.Provider>
+	);
+};
+
 export {
+	AppState,
 	captureEvent,
 	createWord,
 	defaultLevel,
@@ -473,6 +491,7 @@ export {
 	initialState,
 	reducer,
 	streakOptions,
+	useAppState,
 	wpmOptions,
 };
 

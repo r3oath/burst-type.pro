@@ -1,12 +1,9 @@
 'use client';
 
-import type {State} from '@app/config/state';
+import {useMemo} from 'react';
+import {useAppState, type State} from '@app/config/state';
 import {useLastSaved} from '@app/hooks';
-
-type LevelMapProperties = {
-	state: State;
-	wordlist: string[];
-};
+import en1000 from '../wordlists/en1000.json';
 
 const indicatorClasses = (index: number, state: State): string => {
 	if (index === state.level) {
@@ -24,8 +21,11 @@ const indicatorClasses = (index: number, state: State): string => {
 	return 'bg-neutral-200 dark:bg-neutral-800';
 };
 
-const LevelMap = ({state, wordlist}: LevelMapProperties): React.ReactElement => {
-	const lastSaved = useLastSaved(state);
+const LevelMap = (): React.ReactElement => {
+	const [state] = useAppState();
+	const lastSaved = useLastSaved();
+
+	const wordlist = useMemo(() => state.customWordlist ?? en1000, [state.customWordlist]);
 
 	return (
 		<div className="fixed flex justify-center bottom-0 w-full px-10 mb-24">
