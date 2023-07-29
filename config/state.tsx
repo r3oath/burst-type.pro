@@ -403,6 +403,7 @@ const reducer = (state: State, action: Action): State => {
 				level: nextLevel,
 				word: createWord(state.customWordlist ?? en1000, nextLevel),
 				buffer: '',
+				focused: true,
 				finished: false,
 				lastSave: Date.now(),
 			};
@@ -423,6 +424,7 @@ const reducer = (state: State, action: Action): State => {
 				level: previousLevel,
 				word: createWord(state.customWordlist ?? en1000, previousLevel),
 				buffer: '',
+				focused: true,
 				finished: false,
 				lastSave: Date.now(),
 			};
@@ -437,6 +439,7 @@ const reducer = (state: State, action: Action): State => {
 				level: 0,
 				word: createWord(state.customWordlist ?? en1000, 0),
 				buffer: '',
+				focused: true,
 				finished: false,
 				lastSave: Date.now(),
 			};
@@ -455,6 +458,7 @@ const reducer = (state: State, action: Action): State => {
 				level: state.highestLevel,
 				word: createWord(state.customWordlist ?? en1000, state.highestLevel),
 				buffer: '',
+				focused: true,
 				finished: false,
 				lastSave: Date.now(),
 			};
