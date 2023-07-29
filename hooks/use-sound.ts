@@ -2,10 +2,9 @@
 
 import {useCallback, useEffect, useState} from 'react';
 import {useAppState} from '@app/config/state';
+import {randomElement} from '@app/lib/random';
 
 type AudioCache = Record<string, AudioBuffer>;
-
-const randomElement = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)];
 
 const useSound = (): void => {
 	const [state] = useAppState();

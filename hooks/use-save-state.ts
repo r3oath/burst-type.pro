@@ -2,8 +2,9 @@
 
 import {useCallback, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import type {Optional, State} from '@app/config/state';
+import type {State} from '@app/config/state';
 import {captureEvent, initialState, useAppState} from '@app/config/state';
+import type {Optional} from '@app/lib/optional';
 
 const useSaveState = (): boolean => {
 	const [state, dispatch] = useAppState();

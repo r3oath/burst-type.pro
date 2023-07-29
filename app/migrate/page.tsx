@@ -2,9 +2,10 @@
 
 import {useEffect} from 'react';
 import {useSearchParams, useRouter} from 'next/navigation';
-import type {Optional, State} from '@app/config/state';
+import type {State} from '@app/config/state';
 import {createWord, initialState} from '@app/config/state';
 import en1000 from '../../wordlists/en1000.json';
+import type {Optional} from '@app/lib/optional';
 
 const Migrate = (): React.ReactElement => {
 	const parameters = useSearchParams();

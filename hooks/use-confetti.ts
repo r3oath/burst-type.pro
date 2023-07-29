@@ -4,16 +4,13 @@ import {useEffect} from 'react';
 import confetti from 'canvas-confetti';
 import defaultColors from 'tailwindcss/colors';
 import {useAppState} from '@app/config/state';
+import {randomNumber} from '@app/lib/random';
 
 const colors = [
 	defaultColors.green[500],
 	defaultColors.neutral[50],
 	defaultColors.neutral[900],
 ];
-
-const random = (min: number, max: number): number => {
-	return Math.random() * (max - min) + min;
-};
 
 const useConfetti = (): void => {
 	const [state] = useAppState();
@@ -28,9 +25,9 @@ const useConfetti = (): void => {
 		}
 
 		const layers = [
-			{particleCount: random(50, 100), scalar: 0.5, startVelocity: 50},
-			{particleCount: random(25, 50), scalar: 1, startVelocity: 60},
-			{particleCount: random(10, 20), scalar: 1.5, startVelocity: 70},
+			{particleCount: randomNumber(50, 100), scalar: 0.5, startVelocity: 50},
+			{particleCount: randomNumber(25, 50), scalar: 1, startVelocity: 60},
+			{particleCount: randomNumber(10, 20), scalar: 1.5, startVelocity: 70},
 		];
 
 		const canons = [
