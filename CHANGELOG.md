@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/r3oath/burst-type.pro/compare/v1.5.0...v1.6.0) (2023-07-29)
+
+
+### Features
+
+* remove the A-Z only character limit on custom wordlists ([aeee3e6](https://github.com/r3oath/burst-type.pro/commit/aeee3e65dfe75af50bb67a0993e9b934bdd30937))
+* show a warning message when caps are detected ([828df22](https://github.com/r3oath/burst-type.pro/commit/828df22003cd576f7831d263846b2a5cb8671403))
+
+
+### Bug Fixes
+
+* add missing game complete sound ([9d937b1](https://github.com/r3oath/burst-type.pro/commit/9d937b1db4f59724f288abaff1893f02484f47b9))
+
 ## [1.5.0](https://github.com/r3oath/burst-type.pro/compare/v1.4.0...v1.5.0) (2023-07-28)
 
 
