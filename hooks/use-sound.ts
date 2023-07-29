@@ -69,6 +69,10 @@ const useSound = (): void => {
 				playSound(randomElement(state.sounds.streakComplete));
 				break;
 			}
+			case 'gameComplete': {
+				playSound(randomElement(state.sounds.gameComplete));
+				break;
+			}
 			case 'failureSlow': {
 				playSound(randomElement(state.sounds.failureSlow));
 				break;
