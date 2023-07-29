@@ -106,6 +106,14 @@ const WordVisualiser = (): React.ReactElement | undefined => {
 			<p className="text-base mt-1 tracking-tighter text-neutral-600 dark:text-neutral-400">
 				{lastWPMIndicator}
 			</p>
+			{state.focused && state.capsDetected && (
+				<p className="absolute flex items-center justify-center gap-3 bottom-0 -mb-2 inset-x-0 w-full text-base text-center tracking-tighter text-red-700 dark:text-red-500">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+						<path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd"/>
+					</svg>
+					<span>Caps detected (type to dismiss)</span>
+				</p>
+			)}
 			{!state.focused && (
 				<div className="absolute inset-0 flex items-center justify-center bg-neutral-50/50 dark:bg-neutral-900/50 backdrop-blur-lg transition-colors">
 					<button className="flex items-center gap-3 font-medium text-lg text-neutral-900 dark:text-neutral-200 hover:bg-neutral-900/10 hover:dark:bg-neutral-100/10 px-4 py-2 rounded-full" type="button" onClick={handleSetFocus}>

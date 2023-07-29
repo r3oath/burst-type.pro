@@ -52,6 +52,7 @@ type State = {
 	customWordlist?: string[];
 	lastEvent?: Event;
 	lastEventTime?: number;
+	capsDetected: boolean;
 	enableSFXConfetti?: boolean;
 	enableSFXSound?: boolean;
 	sounds: {
@@ -149,6 +150,7 @@ const initialState: State = {
 	showInstructions: true,
 	showCredits: false,
 	darkMode: true,
+	capsDetected: false,
 	enableSFXConfetti: true,
 	enableSFXSound: true,
 	sounds: {
@@ -243,6 +245,7 @@ const reducer = (state: State, action: Action): State => {
 			const timeElapsed = (Date.now() - (state.word.startTime ?? 0)) / 60_000;
 			const wpm = Math.round(action.payload.length / 5 / timeElapsed);
 			const hitTargetWPM = wpm >= state.targetWPM;
+			const capsDetected = action.payload !== action.payload.toLowerCase();
 
 			if (!match) {
 				return {
@@ -264,6 +267,7 @@ const reducer = (state: State, action: Action): State => {
 						hitTargetWPM: false,
 					},
 					buffer: '',
+					capsDetected,
 				};
 			}
 
@@ -278,6 +282,7 @@ const reducer = (state: State, action: Action): State => {
 							...captureEvent('gameComplete'),
 							finished: true,
 							lastSave: Date.now(),
+							capsDetected,
 						};
 					}
 
@@ -290,6 +295,7 @@ const reducer = (state: State, action: Action): State => {
 						buffer: '',
 						lastSave: Date.now(),
 						lastWPM: wpm,
+						capsDetected,
 					};
 				}
 
@@ -313,6 +319,7 @@ const reducer = (state: State, action: Action): State => {
 						hitTargetWPM,
 					},
 					lastWPM: wpm,
+					capsDetected,
 				};
 			}
 
@@ -332,6 +339,7 @@ const reducer = (state: State, action: Action): State => {
 								: character.character === action.payload[index],
 						})),
 					},
+					capsDetected,
 				};
 			}
 
@@ -355,6 +363,7 @@ const reducer = (state: State, action: Action): State => {
 						streak: state.word.streak,
 					},
 					buffer: nextBuffer,
+					capsDetected,
 				};
 			}
 
