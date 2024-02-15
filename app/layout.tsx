@@ -2,6 +2,7 @@ import './globals.css';
 import {Fira_Mono} from 'next/font/google';
 import type {Metadata} from 'next';
 import {Analytics} from '@vercel/analytics/react';
+import {SpeedInsights} from '@vercel/speed-insights/next';
 import {AppState} from '@app/config/state';
 
 const fira = Fira_Mono({subsets: ['latin'], weight: ['400', '700']});
@@ -34,6 +35,7 @@ const RootLayout = ({children}: {children: React.ReactNode}): React.ReactElement
 					{children}
 				</AppState>
 				<Analytics/>
+				<SpeedInsights/>
 			</body>
 		</html>
 	);
