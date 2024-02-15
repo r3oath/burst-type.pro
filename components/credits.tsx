@@ -55,7 +55,7 @@ const Credits = (): React.ReactElement | undefined => {
 					<p className="mt-4 text-neutral-900 dark:text-neutral-100">
 						It has since evolved into a general-layout type-training app (still focused on building burst speed) with the options for users to set custom targets and wordlists. This app is
 						{' '}
-						<a className="text-blue-500 hover:underline" href="https://colemak.com/">open-source</a>
+						<a className="text-blue-500 hover:underline" href="https://github.com/r3oath/burst-type.pro/">open-source</a>
 						{/* eslint-disable-next-line react/jsx-curly-brace-presence */}
 						{''}
 						, so feel free to propose or implement new features or fixes.
