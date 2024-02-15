@@ -58,7 +58,13 @@ const WordVisualiser = (): React.ReactElement | undefined => {
 		}
 
 		if (state.word.endTime !== undefined && !state.word.match) {
-			return 'Typo';
+			let output = 'Typo';
+
+			if (state.typoText !== undefined && state.typoText !== ' ') {
+				output += `: ${state.typoText}`;
+			}
+
+			return output;
 		}
 
 		if (state.word.endTime !== undefined && !state.word.hitTargetWPM) {
@@ -70,7 +76,7 @@ const WordVisualiser = (): React.ReactElement | undefined => {
 		}
 
 		return 'Ready';
-	}, [state.word.endTime, state.word.hitTargetWPM, state.word.match, state.word.startTime]);
+	}, [state.word.endTime, state.word.hitTargetWPM, state.word.match, state.word.startTime, state.typoText]);
 
 	const lastWPMIndicator = useMemo(() => {
 		if (state.lastWPM === undefined) {

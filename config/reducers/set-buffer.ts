@@ -45,6 +45,7 @@ const setBuffer = (state: State, action: SetBufferAction): State => {
 				match: false,
 				hitTargetWPM: false,
 			},
+			typoText: action.payload,
 			buffer: '',
 			capsDetected,
 		};

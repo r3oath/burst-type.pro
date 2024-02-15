@@ -38,6 +38,7 @@ type State = {
 	word: Word;
 	level: number;
 	highestLevel?: number;
+	typoText?: string,
 	buffer: string;
 	targetWPM: number;
 	targetStreak: number;
