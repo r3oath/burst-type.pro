@@ -12,29 +12,30 @@
 		"audit": "npm run lint && npm run ts:build"
 	},
 	"dependencies": {
-		"@types/node": "20.4.5",
-		"@types/react": "18.2.17",
-		"@types/react-dom": "18.2.7",
-		"@typescript-eslint/eslint-plugin": "^6.2.0",
-		"@typescript-eslint/parser": "^6.2.0",
-		"@vercel/analytics": "^1.0.1",
-		"autoprefixer": "10.4.14",
-		"canvas-confetti": "^1.6.0",
-		"eslint": "^8.46.0",
-		"eslint-config-next": "^13.4.12",
-		"eslint-plugin-import": "^2.28.0",
-		"eslint-plugin-jsx-a11y": "^6.7.1",
-		"eslint-plugin-react": "^7.33.1",
-		"eslint-plugin-unicorn": "^48.0.1",
+		"@types/node": "20.11.17",
+		"@types/react": "18.2.55",
+		"@types/react-dom": "18.2.19",
+		"@typescript-eslint/eslint-plugin": "^7.0.1",
+		"@typescript-eslint/parser": "^7.0.1",
+		"@vercel/analytics": "^1.1.4",
+		"@vercel/speed-insights": "^1.0.10",
+		"autoprefixer": "10.4.17",
+		"canvas-confetti": "^1.9.2",
+		"eslint": "^8.56.0",
+		"eslint-config-next": "^14.1.0",
+		"eslint-plugin-import": "^2.29.1",
+		"eslint-plugin-jsx-a11y": "^6.8.0",
+		"eslint-plugin-react": "^7.33.2",
+		"eslint-plugin-unicorn": "^51.0.1",
 		"javascript-time-ago": "^2.5.9",
-		"next": "13.4.12",
-		"postcss": "8.4.27",
+		"next": "14.1.0",
+		"postcss": "8.4.35",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
-		"tailwindcss": "3.3.3",
-		"typescript": "5.1.6"
+		"tailwindcss": "3.4.1",
+		"typescript": "5.3.3"
 	},
 	"devDependencies": {
-		"@types/canvas-confetti": "^1.6.0"
+		"@types/canvas-confetti": "^1.6.4"
 	}
 }
