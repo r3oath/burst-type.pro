@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/r3oath/burst-type.pro/compare/v1.6.0...v1.7.0) (2024-02-16)
+
+
+### Features
+
+* show users the misspelt word when a typo occurs ([f0478cf](https://github.com/r3oath/burst-type.pro/commit/f0478cf9b5c6469d422d6b3cdddbdc3790b45e61))
+
+
+### Bug Fixes
+
+* fix the open-source repo link in the credits modal ([90941bb](https://github.com/r3oath/burst-type.pro/commit/90941bbe62adf81465b914f32aabdeb67c1aa054))
+
 ## [1.6.0](https://github.com/r3oath/burst-type.pro/compare/v1.5.0...v1.6.0) (2023-07-29)
 
 
