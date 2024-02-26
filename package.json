@@ -17,7 +17,7 @@
 		"@types/react-dom": "18.2.19",
 		"@typescript-eslint/eslint-plugin": "^7.0.1",
 		"@typescript-eslint/parser": "^7.0.1",
-		"@vercel/analytics": "^1.1.4",
+		"@vercel/analytics": "^1.2.2",
 		"@vercel/speed-insights": "^1.0.10",
 		"autoprefixer": "10.4.17",
 		"canvas-confetti": "^1.9.2",
