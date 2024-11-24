@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/r3oath/burst-type.pro/compare/v1.7.0...v1.8.0) (2024-11-24)
+
+
+### Features
+
+* add a new wordlist (English 1k sorted by length) ([4f923ad](https://github.com/r3oath/burst-type.pro/commit/4f923adac7afa5cc05b265f39ef15fd4d8a1ac8c))
+
 ## [1.7.0](https://github.com/r3oath/burst-type.pro/compare/v1.6.0...v1.7.0) (2024-02-16)
 
 
