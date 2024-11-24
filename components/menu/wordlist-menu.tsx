@@ -1,6 +1,7 @@
 import {useCallback, useState} from 'react';
 import {useAppState} from '@app/config/state';
 import en1000 from '../../wordlists/en1000.json';
+import en1000bylength from '../../wordlists/en1000bylength.json';
 import endbl from '../../wordlists/endbl.json';
 import rickroll from '../../wordlists/rickroll.json';
 import MenuButton from '../menu-button';
@@ -16,6 +17,7 @@ type WordlistPreset = {
 
 const wordlistPresets: WordlistPreset[] = [
 	{name: 'F1K', wordlist: en1000.join(' ')},
+	{name: '1KL', wordlist: en1000bylength.join(' ')},
 	{name: 'DBL', wordlist: endbl.join(' ')},
 	{name: 'Roll', wordlist: rickroll.join(' ')},
 ];
